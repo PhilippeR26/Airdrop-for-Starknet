@@ -1,1 +1,1 @@
-# Exercise-Asso
+# Airdrop-for-Starknet
