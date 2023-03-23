@@ -1,0 +1,1 @@
+export function getProof(address:string):string {return "ert"}
