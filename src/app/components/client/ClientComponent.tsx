@@ -1,5 +1,4 @@
 'use client';
-import React from "react";
 
 type Props={children:JSX.Element};
 

@@ -345,7 +345,7 @@ export class StarknetMerkleTree {
   }
 
   /**
-   * Lists the values in the tree along with their indices,
+   * Lists the input values in the tree along with their indices,
    * which can be used to obtain proofs.
    *
    * @example

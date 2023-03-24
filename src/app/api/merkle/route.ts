@@ -2,37 +2,46 @@ import { treeData } from "./treeTest";
 import * as merkle from "./merkleLib";
 // import { NextApiRequest, NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
-import { ResponseError, Proof } from "@/interfaces";
-import { json } from "starknet";
+import { ResponseError, ProofAnswer } from "@/interfaces";
+import { json ,num} from "starknet";
 
 export async function GET(request: Request) {
+    function recoverAddress(inp: merkle.inputForMerkle): string {
+        if (typeof inp === 'string') { return inp }
+        return inp[0];
+    }
+
+    function recoverAmount(inp: merkle.inputForMerkle): bigint {
+        if (typeof inp === 'string') { return 0n }
+        return num.toBigInt(inp[1]);
+    }
+
     const tree = merkle.StarknetMerkleTree.load(treeData as merkle.StarknetMerkleTreeData);
     const { url } = request;
-    const { searchParams }=new URL(url);
-    const addr=searchParams.get("addr");
-    //const { searchParams } = myUrl;
-    // console.log("result requzest =", request);
-    // console.log("result requzesturl =", url);
-    // console.log("result requzestmyUrl =", myUrl);
-    // console.log("result requzestmyUrlParams =", searchParams.get("addr"));
-    
-    // const { addr } = query;
-    // for (const [i, v] of tree.entries()) {
-    //     console.log('value:', v);
-    //     console.log('proof:', tree.getProof(i));
-    //     }
-    // console.log("input 0 =",tree.getInputData(0));
-
-    // const id=tree.entries()
-    // const proof=tree.getProof(id);
-    const a: Proof = {
-        address: "0x123",
-        amount: 21n,
-        proof: ["0x01", "0x02"]
+    const { searchParams } = new URL(url);
+    const addr = searchParams.get("addr");
+    if (addr === null) { return new NextResponse(undefined, { status: 415, statusText: "No address provided." }) }
+    let pos: number = -1;
+    for (const [i, v] of tree.entries()) {
+        if (recoverAddress(v) === addr) {
+            pos = i;
+            break
+        }
     }
-    const re = new NextResponse(json.stringify(addr+"zob"), { status: 200, statusText: "All fine" })
+    if (pos===-1) { return new NextResponse(undefined, { status: 404, statusText: "Address not in database." }) }
+
+    const amountAirdrop:bigint=recoverAmount(tree.getInputData(pos));
+
+    const proofT = tree.getProof(pos);
+
+    const a: ProofAnswer = {
+        address: addr,
+        amount: amountAirdrop,
+        proof: proofT,
+        status:200,
+        statusText:"",
+    }
+    const re = new NextResponse(json.stringify(a), { status: 200, statusText: "All fine" })
     return re
-    // return a
-    // ? new NextApiResponse.status(200).json(a)
-    // : result.status(404).json({ message: `User with addr: ${addr} not found.` })
+
 }
