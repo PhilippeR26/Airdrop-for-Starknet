@@ -17,10 +17,11 @@ enum StatusFetch { Never, InProgress, Answered, Error }
 export default function ClientMerkle() {
     const ADDR = "0x7e00d496e324876bbc8531f2d9a82bf154d1a04a50218ee74cdd372f75a551a";
 
-    const [etat, setEtat] = useState<StatusFetch>(StatusFetch.Never);
+    const [etat, setEtat] = useState<StatusFetch>(StatusFetch.InProgress);
 
     async function fetchProof(addr: string): Promise<ProofAnswer> {
         // let data1: string = "En attente";
+        console.log("========== fetch message =",'http://127.0.0.1:3000/api/merkle?addr=' + ADDR)
         const result = await fetch('http://127.0.0.1:3000/api/merkle?addr=' + ADDR)
         // { cache: "no-cache" }
         // console.log('resullt =', result.body);
@@ -36,21 +37,36 @@ export default function ClientMerkle() {
         return re2;
     }
 
-     const [response, setResponse] = useState<ProofAnswer>({ address: "", amount: 0n, proof: [] ,status:200,statusText:""});
+    const [response, setResponse] = useState<ProofAnswer>({ address: "", amount: 0n, proof: [], status: 200, statusText: "" });
     // useEffect(() => {
     //     setEtat(StatusFetch.InProgress);
     //     const res = use(fetchProof(addr));
     //     setEtat(StatusFetch.Answered)
     // }, [addr]);
-    useEffect(() => {fetchProof(ADDR).then((r)=>{setResponse(r)})},[]);
+    useEffect(() => {
+        fetchProof(ADDR).then((r) => {
+            setResponse(r);
+            setEtat(StatusFetch.Answered);
+        })
+    }, []);
     return (
         <Text color="white" fontSize="20px">
-            address={response.address}
-            <br></br>
-
-            Eligible for {response.amount.toString()} ECU
-            <br></br>
-            proof= {response.proof.toString().slice(0,30)+"..."}
+            {
+                etat === StatusFetch.InProgress &&
+                <>
+                    In progress
+                </>
+            }
+            {
+                etat === StatusFetch.Answered &&
+                <>
+                    address={response.address}
+                    <br></br>
+                    Eligible for {response.amount.toString()} ECU
+                    <br></br>
+                    proof= {response.proof.toString().slice(0, 30) + "..."}
+                </>
+            }
         </Text>
     );
 }

@@ -47,13 +47,13 @@
   font-size: 2rem;
   line-height: 3rem;
   text-align: center;
-  padding-top: 20vh;
-  text-shadow: 1px 1px 1px #8fc11d;
+  padding-top: 10vh;
+  text-shadow: 1px 1px 1px rgb(120, 120, 120);
 }
 
 .text1 {
   text-align: center;
-  padding-top: 40vh;
+  padding-top: 0vh;
 }
 
 .code {
