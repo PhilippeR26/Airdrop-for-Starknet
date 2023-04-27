@@ -19,7 +19,7 @@
     "get-wallet-starknet": "file:/D/starknetFork/get-starknetFork/get-wallet-starknet/packages/ui",
     "get-wallet-starknet-core": "file:/D/starknetFork/get-starknetFork/get-wallet-starknet/packages/core",
     "material-react-toastify": "^2.0.1",
-    "next": "^13.3.0",
+    "next": "^13.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "server-only": "^0.0.1",

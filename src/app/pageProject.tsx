@@ -5,7 +5,7 @@ import { Center, Spinner, Text, Button } from '@chakra-ui/react';
 import ClientComponent from './components/client/ClientComponent';
 import { MerkleDisplay } from './components/MerkleDisplay';
 import ClientMerkle from "./components/client/ClientMerkle";
-import WalletConnect from "./components/client/WalletConnect";
+import WalletConnect from "./components/Wallet/WalletConnect";
 
 
 import airdropImg from '../../public/Images/airdrop-for-Starknet.png'
