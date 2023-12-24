@@ -12,7 +12,7 @@ import { useStoreWallet } from './components/Wallet/walletContext';
 
 
 import { AccountInterface, Contract, shortString, json, ProviderInterface, encode, GetBlockResponse } from "starknet";
-import { StarknetWindowObject, connect } from "get-wallet-starknet";
+import { connect, disconnect, StarknetWindowObject } from "get-starknet"
 
 import { contratSierra } from "./compiledContracts/test_type1_sierra";
 
