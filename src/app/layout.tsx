@@ -1,8 +1,11 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Airdrop-for-Starknet',
-  description: 'Airdrop on Starknet network',
+  title: 'WTF token airdrop',
+  description: 'Demo of airdrop in Starknet',
+  icons: {
+    icon: "./favicon.ico",
+  },
 }
 
 export default function RootLayout({
@@ -13,7 +16,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}</body>
+        {children}
+      </body>
     </html>
   )
 }
