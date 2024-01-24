@@ -1,81 +1,90 @@
-import { use, useEffect, useMemo, useState } from 'react';
-import { Provider, ProviderInterface, RpcProvider, constants, GetBlockResponse, Contract, uint256, shortString } from "starknet";
+import { useEffect, useState } from 'react';
+import { Account, Contract, DeclareContractResponse, InvokeFunctionResponse,RPC,constants } from "starknet";
 
-import { useStoreBlock, DataBlock, dataBlockInit } from "../Block/blockContext";
-import { useStoreWallet } from '../../Wallet/walletContext';
+import { useStoreBlock } from "../Block/blockContext";
+import { useStoreWallet } from '../ConnectWallet/walletContext';
 
-import { Text, Button, Center, Spinner } from "@chakra-ui/react";
+import { Text, Button, Center, Spinner, Box } from "@chakra-ui/react";
 import styles from '../../../page.module.css'
 
-import { erc20Abi } from "../../../contracts/abis/ERC20abi";
-import { test1Abi } from "../../../contracts/abis/test1";
+import { test1Abi } from "../../../../../Trash/test1";
+import TransactionStatus from '../Transaction/TransactionStatus';
 
-const contractAddress = "0x697d3bc2e38d57752c28be0432771f4312d070174ae54eef67dd29e4afb174";
+const contractAddress = "0x6713161c85c2063aaf601690daa2bf9362b8aa00266e246b3839a92c878b5f7";
 
 export default function PlayWithCairo1() {
     // wallet context
-    const providerSN = useStoreWallet(state => state.provider);
-    const accountAddressFromContext = useStoreWallet(state => state.address);
+    const myProvider = useStoreWallet(state => state.myProvider);
+    const accountWalletFromContext = useStoreWallet(state => state.accountW);
 
     // block context
     const blockFromContext = useStoreBlock(state => state.dataBlock);
 
+    // Component context
     const [balance, setBalance] = useState<number>(0);
-    const [decimals, setDecimals] = useState<number>(1)
-    const [symbol, setSymbol] = useState<string>("");
+    const [transactionHash, setTransactionHash] = useState<string>("");
 
-    const cairo1Contract = new Contract(test1Abi, contractAddress, providerSN);
-
+    const [cairo1ReadContract, setcairo1Contract] = useState<Contract>(new Contract(test1Abi, contractAddress, myProvider));
 
     useEffect(() => {
-        cairo1Contract.get_balance()
-            .then((resp: any) => {
+        cairo1ReadContract.get_balance()
+            .then((resp: bigint) => {
                 console.log("resp =", resp)
-                // const res2 = resp.balance;
-                // const res3 = Number(uint256.uint256ToBN(res2));
-                // console.log("res3=", res3);
                 setBalance(Number(resp));
-            }
-
-            )
+            })
             .catch((e: any) => { console.log("error get_balance =", e) });
-
         return () => { }
     }
         , [blockFromContext.blockNumber]); // balance updated at each block
 
+    function increaseBalance() {
+        console.log("increase-Cairo1ReadContract=", cairo1ReadContract.functions);
+        const call = cairo1ReadContract.populate("increase_counter", [10]);
+        console.log("Call=", call);
+        accountWalletFromContext?.execute(call, undefined, {version:3})
+            .then((resp: InvokeFunctionResponse) => {
+                console.log("increaseBalance txH =", resp.transaction_hash)
+                setTransactionHash(resp.transaction_hash);
+            })
+            .catch((e: any) => { console.log("error increase balance =", e) });
+    }
 
     return (
-        <>
+        <Box bg='mediumaquamarine' color='black' borderWidth='1px' borderRadius='md' paddingBottom='3px'>
             {
                 !balance ? (
                     <Center>
-
                         <Spinner color="blue" size="sm" />  _Fetching data ...
                     </Center>
-
                 ) : (
                     <>
-                        <Text className={styles.text1}>Balance = {balance} {symbol} </Text>
-                        <Center>
-                            <Button
-                                ml="4"
-                                textDecoration="none !important"
-                                outline="none !important"
-                                boxShadow="none !important"
-                                onClick={() => {
-                                    // IncreaseBalance();
-                                }}
-                            >
-                                Increase balance (+10)
-                            </Button>
-
-                        </Center>
+                        <div>
+                            <Text className={styles.text1}>Balance = {balance} tokens</Text>
+                            <Center>
+                                <Button
+                                    ml="4"
+                                    textDecoration="none !important"
+                                    outline="none !important"
+                                    boxShadow="none !important"
+                                    bg='green.100'
+                                    onClick={() => {
+                                        increaseBalance();
+                                    }}
+                                >
+                                    Increase balance (+10)
+                                </Button>
+                            </Center>
+                        </div>
+                        {!!transactionHash && (
+                            <Box bg='green.300' color='black' borderWidth='1px' borderColor='green.800' borderRadius='md' p={1} marginTop={2}>
+                                <Text className={styles.text1}>Transaction version 3.</Text>
+                                <TransactionStatus transactionHash={transactionHash}></TransactionStatus>
+                            </Box>
+                        )
+                        }
                     </>
                 )
             }
-
-        </>
-
+        </Box>
     )
 }

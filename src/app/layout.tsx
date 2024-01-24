@@ -1,7 +1,7 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'WTF token airdrop',
+  title: 'SJS6 token airdrop',
   description: 'Demo of airdrop in Starknet',
   icons: {
     icon: "./favicon.ico",

@@ -1,83 +1,75 @@
-import { use, useEffect, useMemo, useState } from 'react';
-import { Provider, ProviderInterface, RpcProvider, constants, GetBlockResponse, Contract, uint256, shortString } from "starknet";
+"use client";
 
-import { useStoreBlock, DataBlock, dataBlockInit } from "../Block/blockContext";
-import { useStoreWallet } from '../../Wallet/walletContext';
-
-import { Text, Button, Center, Spinner } from "@chakra-ui/react";
+import { useEffect, useState } from 'react';
+import { Text, Center, Spinner, } from "@chakra-ui/react";
 import styles from '../../../page.module.css'
 
-import { erc20Abi } from "../../../contracts/abis/ERC20abi"
+import { Contract, uint256, shortString, RpcProvider } from "starknet";
+
+import { useStoreBlock } from "../Block/blockContext";
+import { useStoreWallet } from '../ConnectWallet/walletContext';
+
+
+import { erc20Abi } from '../../../contracts/abis/ERC20abi';
+import {  myProviderUrl } from '@/app/utils/constants';
+import { formatBalance } from '@/app/utils/formatBalance';
 
 type Props = { tokenAddress: string };
 
 export default function GetBalance({ tokenAddress }: Props) {
-    // wallet context
-    const providerSN = useStoreWallet(state => state.provider);
-    const accountAddressFromContext = useStoreWallet(state => state.address);
-
     // block context
     const blockFromContext = useStoreBlock(state => state.dataBlock);
+    const accountAddress = useStoreWallet((state) => state.addressAccount);
 
-    const [balance, setBalance] = useState<number>(0);
-    const [decimals, setDecimals] = useState<number>(1)
+    const [balance, setBalance] = useState<bigint | undefined>(undefined);
+    const [decimals, setDecimals] = useState<number>(18)
     const [symbol, setSymbol] = useState<string>("");
 
-    const myContract = new Contract(erc20Abi, tokenAddress, providerSN);
+    const [erc20Contract] = useState<Contract>(new Contract(erc20Abi, tokenAddress, new RpcProvider({ nodeUrl: myProviderUrl })));
+
     useEffect(() => {
-        myContract.decimals()
-            .then((resp: any) => {
-                const res2 = resp.decimals;
-                console.log("resDecimals=", res2);
-                setDecimals(Number(res2));
-            })
-            .catch((e: any) => { console.log("error getDecimals=", e) });
+        const fetchData = async () => {
 
-        myContract.symbol()
-            .then((resp: any) => {
-                const res2 = shortString.decodeShortString(resp.symbol);
-                console.log("ressymbol=", res2);
-                setSymbol(res2);
-            })
-            .catch((e: any) => { console.log("error getSymbol=", e) });
+            const resp1 = await erc20Contract.call("decimals") ;
+            console.log("addr ERC20=",erc20Contract.address);
+            console.log("resDecimals=", resp1);
+            setDecimals(Number(resp1));
 
+            const resp2 = await erc20Contract.call("symbol") as bigint;
+            console.log("resp2=",resp2);
+            const res2 = shortString.decodeShortString(resp2.toString());
+            console.log("resSymbol=", res2);
+            setSymbol(res2);
+        }
+        fetchData().catch(console.error);
     }
         , []);
 
     useEffect(() => {
-        myContract.balanceOf(accountAddressFromContext)
-            .then((resp: any) => {
-                const res2 = resp.balance;
-                const res3 = Number(uint256.uint256ToBN(res2));
-                console.log("res3=", res3);
-                setBalance(res3 / Math.pow(10, decimals));
-            }
-
-            )
-            .catch((e: any) => { console.log("error getBloc=", e) });
-
-        return () => { }
+        const fetchData = async () => {
+            const resp3 = await erc20Contract.call("balanceOf", [accountAddress]) as bigint;
+            console.log("balance=", resp3);
+            setBalance(resp3);
+        }
+        fetchData().catch(console.error);
     }
         , [blockFromContext.blockNumber, decimals]); // balance updated at each block
-
 
     return (
         <>
             {
-                !balance ? (
-                    <Center>
-
-                        <Spinner color="blue" size="sm" />  _Fetching data ...
-                    </Center>
-
+                typeof (balance) !== "bigint" ? (
+                    <>
+                        <Center>
+                            <Spinner color="blue" size="sm" mr={4} />  Fetching data ...
+                        </Center>
+                    </>
                 ) : (
                     <>
-                        <Text className={styles.text1}>Balance = {balance} {symbol} </Text>
+                        <Text className={styles.text1}>Balance = {formatBalance(balance, decimals)} {symbol} </Text>
                     </>
                 )
             }
-
         </>
-
     )
 }

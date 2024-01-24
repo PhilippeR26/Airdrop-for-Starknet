@@ -1,51 +1,78 @@
 "use client";
 
 import { useStoreWallet } from './walletContext';
+import styles from './page.module.css'
 
-import { Button } from "@chakra-ui/react";
+import { Box, Button, Center, ChakraProvider, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { StarknetWindowObject } from "get-starknet";
-import { Account, encode, RpcProvider, constants as SNconstants } from "starknet";
+import { Account, encode, RpcProvider, shortString, constants as SNconstants } from "starknet";
+import InteractContract from '../Contract/InteractContract';
+import SelectWallet from './SelectWallet';
 
 
 export default function ConnectWallet() {
-    const addressAccount = useStoreWallet(state => state.addressAccount);
-    const wallet = useStoreWallet(state => state.wallet);
+  const addressAccount = useStoreWallet(state => state.addressAccount);
+  const wallet = useStoreWallet(state => state.wallet)
 
+  const displaySelectWalletUI = useStoreWallet(state => state.displaySelectWalletUI);
+  const setSelectWalletUI = useStoreWallet(state => state.setSelectWalletUI);
 
-    // Server
-    //const setProvider = useStoreBackend(state => state.setProviderBackend);
+  const chainFromContext = useStoreWallet(state => state.chain);
+  const setChain = useStoreWallet(state => state.setChain);
 
-    const handleConnectClick = async () => {
-        // const getWallet = await connect({ modalMode: "alwaysAsk", modalTheme: "light" });
-        await getWallet?.enable({ starknetVersion: "v5" } as any);
-        useStoreWallet.setState({ wallet: getWallet });
-        useStoreWallet.setState({ providerW: getWallet?.provider });
-        const addr = encode.addHexPrefix(encode.removeHexPrefix(getWallet?.selectedAddress ?? "0x").padStart(64, "0"));
-        useStoreWallet.setState({ addressAccount: addr });
-        useStoreWallet.setState({ isConnected: getWallet?.isConnected });
-        if (getWallet?.account) {
-            useStoreWallet.setState({ accountW: getWallet.account });
-            !!(getWallet.chainId) ?
-                useStoreWallet.setState({ chainId: getWallet.chainId }) :
-                useStoreWallet.setState({ chainId: SNconstants.StarknetChainId.SN_GOERLI });
-            // const backEndProvider = await providerBackend();
-            // setProvider(backEndProvider);
-            // const backEndAccount: Account = await initAccountBackend(addressAccount);
+  const providerFromContext = useStoreWallet(state => state.provider);
+  const setProvider = useStoreWallet(state => state.setProvider);
+
+  const addressAccountFromContext = useStoreWallet(state => state.addressAccount);
+  const setAddressAccount = useStoreWallet(state => state.setAddressAccount);
+
+  const isConnected = useStoreWallet(state => state.isConnected);
+  const setConnected = useStoreWallet(state => state.setConnected);
+
+  const devnetAccount = ()=>{
+    setConnected(true); // zustand
+    setAddressAccount("0x78662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1"); // zustand
+  }
+
+  return (
+    <ChakraProvider>
+
+      <div>
+        {!isConnected ? (
+          <>
+            <Button
+              colorScheme='pink'
+              ml="4"
+              marginTop={1}
+              marginBottom={1}
+              // onClick={() => setSelectWalletUI(true) // Mainnet}
+              onClick={devnetAccount} // devnet
+            >
+              Connect a Mainnet Wallet
+            </Button>
+            {displaySelectWalletUI ? <SelectWallet></SelectWallet> : null}
+          </>
+        ) : (
+          <>
+            <Button
+              colorScheme='pink'
+              ml="4"
+              marginTop={1}
+              marginBottom={1}
+              onClick={() => {
+                setConnected(false);
+                setSelectWalletUI(false)
+              }}
+            >
+              {addressAccountFromContext
+                ? `Your account : ${addressAccountFromContext?.slice(0, 7)}...${addressAccountFromContext?.slice(-4)} in ${shortString.decodeShortString(chainFromContext)} is connected`
+                : "No Account"}
+            </Button>
+          </>
+        )
         }
+      </div>
 
-        console.log("handleClick =",useStoreWallet.getState().isConnected);
-    }
-    return (
-        <Button
-            ml="4"
-            textDecoration="none !important"
-            outline="none !important"
-            boxShadow="none !important"
-            onClick={() => {
-                handleConnectClick();
-            }}
-        >
-            Connect Wallet
-        </Button>
-    )
+    </ChakraProvider>
+  )
 }
