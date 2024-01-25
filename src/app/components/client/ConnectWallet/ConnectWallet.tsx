@@ -6,8 +6,8 @@ import styles from './page.module.css'
 import { Box, Button, Center, ChakraProvider, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { StarknetWindowObject } from "get-starknet";
 import { Account, encode, RpcProvider, shortString, constants as SNconstants } from "starknet";
-import InteractContract from '../Contract/InteractContract';
 import SelectWallet from './SelectWallet';
+import { devnetAccountAddress } from '@/app/utils/constants';
 
 
 export default function ConnectWallet() {
@@ -31,7 +31,7 @@ export default function ConnectWallet() {
 
   const devnetAccount = ()=>{
     setConnected(true); // zustand
-    setAddressAccount("0x78662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1"); // zustand
+    setAddressAccount(devnetAccountAddress); // zustand
   }
 
   return (

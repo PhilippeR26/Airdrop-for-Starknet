@@ -2,9 +2,9 @@
 import NextImage from 'next/image'
 import styles from './page.module.css'
 import { Center, Spinner, Text, Button, ChakraProvider, Box, Link } from '@chakra-ui/react';
-import ClientComponent from './components/client/ClientComponent';
-import { MerkleDisplay } from '../../Trash/MerkleDisplay';
+import Image from 'next/image'
 
+import ClientComponent from './components/client/ClientComponent';
 import airdropImg from './Images/airdrop-for-Starknet.jpg'
 import { use } from 'react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
@@ -14,6 +14,8 @@ import BlockSurvey from './components/client/Block/BlockSurvey';
 import { myProviderUrl as FrontEndProviderUrl } from './utils/constants';
 import Airdrop from './components/client/Airdrop/Airdrop';
 import LowerBanner from './components/client/LowerBanner';
+import starknetjsImg from "./Images/StarkNet-JS_logo.png";
+
 
 export default async function Page() {
   // const data1 =  fetchProof("0x7e00d496e324876bbc8531f2d9a82bf154d1a04a50218ee74cdd372f75a551a");
@@ -35,21 +37,24 @@ export default async function Page() {
             }}
           />
         </div>
+        <Center p="2" >
+          <Image src={starknetjsImg} alt='starknet.js' width={150}  />
+        </Center>
         <Center>
           <Box
             marginTop={2}
             marginBottom={7}
-            w="480px" h="130px"
+            w="480px" 
             borderRadius={25}
             bg='pink.300'
             opacity="80%"
             p="2"
             textAlign={'center'}
-            fontSize="36"
+            fontSize="28"
             fontWeight="extrabold"
             color="red.700"
           >
-            STARKNET MAINNET<br></br>
+            STARKNET.JS V6 CELEBRATION<br></br>
             'SJS6' TOKEN AIRDROP
           </Box>
         </Center>
@@ -97,7 +102,7 @@ export default async function Page() {
           </Box>
         </Center>
       </div >
-    <LowerBanner></LowerBanner>
+      <LowerBanner></LowerBanner>
     </ChakraProvider>
   )
 }

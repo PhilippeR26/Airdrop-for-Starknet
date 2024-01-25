@@ -66,7 +66,7 @@ export default function GetBalance({ tokenAddress }: Props) {
                     </>
                 ) : (
                     <>
-                        <Text className={styles.text1}>Balance = {formatBalance(balance, decimals)} {symbol} </Text>
+                        <Text className={styles.text1}>Balance = {balance.toString()} {symbol} </Text>
                     </>
                 )
             }

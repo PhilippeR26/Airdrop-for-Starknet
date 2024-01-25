@@ -51,7 +51,6 @@ export default function StatusAirdrop() {
       <Divider borderColor='gray.800' />
       {qtyAirdrop.toString()} tokens are already airdropped from the white list.<br></br>
       {qtyConsolationRemaining.toString()} tokens are remaining as consolation prizes.
-      <Divider borderColor='gray.800' />
     </Box>
   </Center>
 }
