@@ -6,10 +6,12 @@ import { ProofAnswer } from "@/interfaces";
 import { revalidatePath } from "next/cache";
 import { uint256 } from "starknet";
 import { treePath } from "../utils/constants";
+import { treeAddresses } from "../tree/treeListAddressDevnet";
+
 
 export async function checkWhitelist(accountAddress: string): Promise<ProofAnswer> {
     const tree = Merkle.StarknetMerkleTree.load(
-        JSON.parse(fs.readFileSync(process.cwd()+treePath, 'ascii'))
+        JSON.parse(treeAddresses)
     );
     const indexAddress = tree.dump().values.findIndex((leaf) => leaf.value[0] == accountAddress);
     if (indexAddress === -1) {
