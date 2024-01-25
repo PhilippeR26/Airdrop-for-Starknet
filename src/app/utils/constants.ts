@@ -8,7 +8,7 @@ export const erc20Address="0x170c396823d96d381e5deed6d88624e51ea17b264d651152f61
 
 //export const AirdropAddress="0x01234"; // Mainnet
 export const AirdropAddress="0x46d573983dbcb7dffb26cf851f2f4bf5a249a0d2e7c3c0deda6e23d302d93cc"; // devnet-rs
-export const treePath="./src/app/tree/treeListAddressDevnet.json";
+export const treePath="/src/app/tree/treeListAddressDevnet.json";
 
 // export  const devnetAccountAddress="0x78662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1"; //devnet-rs 1
 // export const devnetPk="0xe1406455b7d66b1690803be066cbe5e"; //devnet-rs 1
