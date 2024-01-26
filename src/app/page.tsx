@@ -15,6 +15,7 @@ import { myProviderUrl as FrontEndProviderUrl } from './utils/constants';
 import Airdrop from './components/client/Airdrop/Airdrop';
 import LowerBanner from './components/client/LowerBanner';
 import starknetjsImg from "./Images/StarkNet-JS_logo.png";
+import InitialDisclaimer from './components/client/InitialDisclaimer';
 
 
 export default async function Page() {
@@ -23,6 +24,7 @@ export default async function Page() {
   // console.log("data1 =", data1);
   return (
     <ChakraProvider>
+      <InitialDisclaimer></InitialDisclaimer>
       <div>
         <div className={styles.bgWrap}>
           <NextImage

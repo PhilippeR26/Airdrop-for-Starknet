@@ -27,7 +27,7 @@ export async function checkWhitelist(accountAddress: string): Promise<ProofAnswe
     const inpData = tree.getInputData(indexAddress);
     const leafHash = Merkle.StarknetMerkleTree.leafHash(inpData, Merkle.HashType.Poseidon);
     const proof = tree.getProof(indexAddress);
-    revalidatePath("/"); // clear cache and update result
+    // revalidatePath("/"); // clear cache and update result
     return {
         address: accountAddress,
         amount: uint256.uint256ToBN({low:inpData[1],high:inpData[2]}),
