@@ -41,6 +41,8 @@ trait IMerkleVerify<TContractState> {
 #[starknet::interface]
 trait IAirdrop<TContractState> {
     fn get_merkle_address(self: @TContractState) -> ContractAddress;
+    fn get_erc20_address(self: @TContractState) -> ContractAddress;
+    fn get_start_time(self: @TContractState) -> u64;
     fn get_time(self: @TContractState) -> u64;
     fn is_address_airdropped(self: @TContractState, address: ContractAddress) -> bool;
     fn is_address_consoled(self: @TContractState, address: ContractAddress) -> bool;
@@ -111,6 +113,16 @@ mod airdrop {
             self.merkle_address.read()
         }
 
+        // returns the address of the erc20 
+        fn get_erc20_address(self: @ContractState) -> ContractAddress {
+            self.erc20_address.read()
+        }
+
+        // returns the timestamp of start of airdrop 
+        fn get_start_time(self: @ContractState) -> u64 {
+            self.start_time.read()
+        }
+
         // returns the time of start of the airdrop
         fn get_time(self: @ContractState) -> u64 {
             get_block_timestamp()
@@ -149,7 +161,7 @@ mod airdrop {
                 // Airdrop
                 // Register the address as already consoled
                 self.airdrop_performed.write(address, true);
-                self.airdrop_qty_performed.write(self.airdrop_qty_performed.read() +amount);
+                self.airdrop_qty_performed.write(self.airdrop_qty_performed.read() + amount);
                 // to be sure to perform the airdrop only once per address.
 
                 // Perform here your transfer of token.

@@ -65,7 +65,7 @@ export default function ConnectWallet() {
               }}
             >
               {addressAccountFromContext
-                ? `Your account : ${addressAccountFromContext?.slice(0, 7)}...${addressAccountFromContext?.slice(-4)} in ${shortString.decodeShortString(chainFromContext)} is connected`
+                ? `Your account : ${addressAccountFromContext?.slice(0, 6)}...${addressAccountFromContext?.slice(-4)} in ${shortString.decodeShortString(chainFromContext)} is connected`
                 : "No Account"}
             </Button>
           </>
