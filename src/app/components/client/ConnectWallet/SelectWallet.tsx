@@ -8,7 +8,7 @@ import sn, {
 import { useEffect } from "react";
 import { useState } from "react";
 import { formatAddress } from "../../../utils/utils";
-import { constants, shortString } from "starknet";
+import { constants, encode, shortString } from "starknet";
 
 enum Permission {
   Accounts = "accounts",
@@ -79,7 +79,7 @@ export default function SelectWallet() {
     setConnected(true); // zustand
     setMyWallet(wallet); // zustand
     setAccount(wallet.account); // zustand
-    setAddressAccount(wallet.account.address); // zustand
+    setAddressAccount(encode.sanitizeHex(wallet.account.address).toLowerCase()); // zustand
     if (wallet.chainId) {
       setChain(wallet.chainId.startsWith("0x") ? wallet.chainId : shortString.encodeShortString(wallet.chainId));
     } else {

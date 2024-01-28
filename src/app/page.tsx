@@ -4,10 +4,7 @@ import styles from './page.module.css'
 import { Center, Spinner, Text, Button, ChakraProvider, Box, Link } from '@chakra-ui/react';
 import Image from 'next/image'
 
-import ClientComponent from './components/client/ClientComponent';
 import airdropImg from './Images/airdrop-for-Starknet.jpg'
-import { use } from 'react';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 import StatusAirdrop from './components/client/StatusAirdrop';
 import ConnectWallet from './components/client/ConnectWallet/ConnectWallet';
 import BlockSurvey from './components/client/Block/BlockSurvey';
@@ -19,9 +16,6 @@ import InitialDisclaimer from './components/client/InitialDisclaimer';
 
 
 export default async function Page() {
-  // const data1 =  fetchProof("0x7e00d496e324876bbc8531f2d9a82bf154d1a04a50218ee74cdd372f75a551a");
-  // const data2=use(data1);
-  // console.log("data1 =", data1);
   return (
     <ChakraProvider>
       <InitialDisclaimer></InitialDisclaimer>
@@ -83,7 +77,7 @@ export default async function Page() {
         <Center>
           <Box
             marginTop="1"
-            marginBottom="5"
+            marginBottom={12}
             borderColor="red"
             borderWidth="3px"
             borderRadius="xl"
@@ -99,7 +93,7 @@ export default async function Page() {
             <Link color="blue.700" href='https://github.com/PhilippeR26/Airdrop-for-Starknet' isExternal> here</Link>
             . <br></br>
             A tutorial to create a such airdrop is available
-            <Link color="blue.700" href='https://github.com/PhilippeR26/Airdrop-for-Starknet' isExternal> here</Link>
+            <Link color="blue.700" href='https://github.com/PhilippeR26/Airdrop-for-Starknet/blob/main/airdrop-tuto.md' isExternal> here</Link>
             .
           </Box>
         </Center>

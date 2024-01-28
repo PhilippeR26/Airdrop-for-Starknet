@@ -8,7 +8,7 @@
 
 > **Stars are highly appreciated! Thanks in advance.**
 
-This repo contains a demo DAPP of an airdrop on Starknet network.  
+This repo contains a demo DAPP performing an airdrop in the Starknet network.  
 
 you can launch this DAPP [here](https://airdrop-for-starknet.vercel.app/).
 It can be used as boiler plate to create your own airdrop.
@@ -18,9 +18,15 @@ A tutorial to create an airdrop DAPP from scratch is available [here](./airdrop-
 
 ## Libraries :
 This DAPP is using the most famous Starknet libs :
- - [Starknet.js](https://www.starknetjs.com)
- - [Starknet-merkle-tree](https://github.com/PhilippeR26/starknetMerkleTree)
- - [get-starknet]()
+- [Starknet.js](https://www.starknetjs.com)
+- [Starknet-merkle-tree](https://github.com/PhilippeR26/starknetMerkleTree)
+- [Get-starknet]()
+
+and also :
+- Next.js for the DAPP framework
+- Chakra-ui for th UI
+- Zustand for the context handling
+- Vercel for the deployment
 
 ## Testing the DAPP :
 

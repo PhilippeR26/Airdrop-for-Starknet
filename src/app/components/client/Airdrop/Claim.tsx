@@ -8,6 +8,7 @@ import { airdropAbi } from "@/app/contracts/abis/airdropAbi";
 import { AirdropAddress, devnetPk, myProviderUrl } from "@/app/utils/constants";
 import { Account, Contract, RpcProvider } from "starknet";
 import { useStoreBlock } from "../Block/blockContext";
+import { useStoreAirdrop } from "./airdropContext";
 
 
 export default function Airdrop() {
@@ -16,7 +17,10 @@ export default function Airdrop() {
   const blockFromContext = useStoreBlock(state => state.dataBlock);
   const [isChecked, setIsChecked] = useState<Boolean>(false);
   const [isProcessStarted, setIsProcessStarted] = useState<Boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<Boolean>(false);
+  //const [isSuccess, setIsSuccess] = useState<Boolean>(false);
+  const isAirdropSuccess = useStoreAirdrop((state) => state.isAirdropSuccess);
+    const setIsAirdropSuccess = useStoreAirdrop((state) => state.setIsAirdropSuccess);
+
   const [isError, setIsError] = useState<Boolean>(false);
   const [amount, setAmount] = useState<bigint>(0n);
   const [proof, setProof] = useState<string[]>([]);
@@ -26,7 +30,8 @@ export default function Airdrop() {
   const addressAccountFromContext = useStoreWallet(state => state.addressAccount);
   const [myProvider] = useState<RpcProvider>(new RpcProvider({ nodeUrl: myProviderUrl }));
   const [airdropContract] = useState<Contract>(new Contract(airdropAbi, AirdropAddress, new RpcProvider({ nodeUrl: myProviderUrl })));
-  const [account] = useState<Account>(new Account(new RpcProvider({ nodeUrl: myProviderUrl }), addressAccountFromContext, devnetPk));
+  const account = useStoreWallet(state => state.account); // no devnet
+  // const [account] = useState<Account>(new Account(new RpcProvider({ nodeUrl: myProviderUrl }), addressAccountFromContext, devnetPk)); //devnet
   const claim = async () => {
     setIsProcessStarted(true);
     const claimCall = airdropContract.populate("claim_airdrop", {
@@ -34,18 +39,18 @@ export default function Airdrop() {
       proof: proof,
     })
     try {
-      const resp = await account.execute(claimCall, undefined, {});
+      const resp = await account!.execute(claimCall, undefined, {});
       const txR = await myProvider.waitForTransaction(resp.transaction_hash);
       if (txR.execution_status == "SUCCEEDED") {
         setIsError(false);
-        setIsSuccess(true);
+        setIsAirdropSuccess(true);
       } else {
-        setIsSuccess(false);
+        setIsAirdropSuccess(false);
         setIsError(true);
       }
     } catch (err) {
       console.log("Claim invocation failed :", err);
-      setIsSuccess(false);
+      setIsAirdropSuccess(false);
       setIsError(true);
     }
 
@@ -58,18 +63,18 @@ export default function Airdrop() {
       proof: ["0x00"],
     })
     try {
-      const resp = await account.execute(claimCall, undefined, {});
+      const resp = await account!.execute(claimCall, undefined, {});
       const txR = await myProvider.waitForTransaction(resp.transaction_hash);
       if (txR.execution_status == "SUCCEEDED") {
         setIsError(false);
-        setIsSuccess(true);
+        setIsAirdropSuccess(true);
       } else {
-        setIsSuccess(false);
+        setIsAirdropSuccess(false);
         setIsError(true);
       }
     } catch (err) {
       console.log("Claim invocation failed :", err);
-      setIsSuccess(false);
+      setIsAirdropSuccess(false);
       setIsError(true);
     }
 
@@ -78,10 +83,11 @@ export default function Airdrop() {
   useEffect(() => {
     const fetchData = async () => {
       if (isConnected) {
-        console.log("address in whitelist?", addressAccountFromContext);
         // ask to server 
         const whiteListAnswer: ProofAnswer = await checkWhitelist(addressAccountFromContext);
         setIsEligible(whiteListAnswer.isWhiteListed);
+        console.log("address in whitelist?", addressAccountFromContext, whiteListAnswer.isWhiteListed);
+        
         setAmount(whiteListAnswer.amount);
         setProof(whiteListAnswer.proof);
         setLeaf(whiteListAnswer.leaf);
@@ -111,8 +117,8 @@ export default function Airdrop() {
         {!isEligible ? (
           <>
             {isProcessStarted ? (<>
-              {!isSuccess && !isError && (<> <Spinner color="blue" size="sm" mr={4} />  Processing reward ... </>)}
-              {isSuccess ? (<>
+              {!isAirdropSuccess && !isError && (<> <Spinner color="blue" size="sm" mr={4} />  Processing reward ... </>)}
+              {isAirdropSuccess ? (<>
                 Consolation prize successfully processed.
               </>) : (<>
                 {isError && (<>
@@ -145,8 +151,8 @@ export default function Airdrop() {
         ) : (  // eligible
           <>
             {isProcessStarted ? (<>
-              {!isSuccess && !isError && (<> <Spinner color="blue" size="sm" mr={4} />  Processing claim ... </>)}
-              {isSuccess ? (<>
+              {!isAirdropSuccess && !isError && (<> <Spinner color="blue" size="sm" mr={4} />  Processing claim ... </>)}
+              {isAirdropSuccess ? (<>
                 Claim successfully processed. <br></br>
                 Do not forget to configure your wallet to display this token.
               </>) : (<>

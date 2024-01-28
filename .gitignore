@@ -36,7 +36,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 yalc.lock
-/scripts-ts-node/
 
 package-lock.json
 /Trash

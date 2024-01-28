@@ -7,7 +7,7 @@ import { Box, Button, Center, ChakraProvider, Tab, TabList, TabPanel, TabPanels,
 import { StarknetWindowObject } from "get-starknet";
 import { Account, encode, RpcProvider, shortString, constants as SNconstants } from "starknet";
 import SelectWallet from './SelectWallet';
-import { devnetAccountAddress } from '@/app/utils/constants';
+import { devnetAccountAddress, networkName } from '@/app/utils/constants';
 
 
 export default function ConnectWallet() {
@@ -45,10 +45,10 @@ export default function ConnectWallet() {
               ml="4"
               marginTop={1}
               marginBottom={1}
-              // onClick={() => setSelectWalletUI(true) // Mainnet}
-              onClick={devnetAccount} // devnet
+              onClick={() => setSelectWalletUI(true)} // Mainnet
+              // onClick={devnetAccount} // devnet
             >
-              Connect a Mainnet Wallet
+              Connect a {networkName} Wallet
             </Button>
             {displaySelectWalletUI ? <SelectWallet></SelectWallet> : null}
           </>
