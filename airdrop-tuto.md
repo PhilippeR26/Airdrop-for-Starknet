@@ -37,10 +37,10 @@ You have to transform these data into a json file. I made it with the find/repla
   
 These arrays are called the **leaves** of the Merkle tree.  
 I added 3 of my personal accounts, to be able to perform some tests.  
-The result is [here](scripts-ts-node/listAddressesGoerli.json) .
+The result is [here]( scripts/listAddressesGoerli.json) .
 
 Several TS codes will now be used, using the Goerli Testnet.  
-> All these scripts can be read [here](./scripts-ts-node), and you can run them directly in my tuto repo [here](https://github.com/PhilippeR26/starknet.js-workshop-typescript/tree/main/src/scripts/merkleTree/airdropSJS6Goerli).
+> All these scripts can be read [here](./ scripts), and you can run them directly in my tuto repo [here](https://github.com/PhilippeR26/starknet.js-workshop-typescript/tree/main/src/scripts/merkleTree/airdropSJS6Goerli).
 
 The first script is using the [starknet-merkle-tree](https://www.npmjs.com/package/starknet-merkle-tree) library.
 The tree can be hashed with Pedersen or Poseidon algorithms 
@@ -84,7 +84,7 @@ You can find in script 3 the details for the deployment of the SJS6 ERC20 token.
 
 ## Declare/deploy the airdrop management contract :
 In this example, there is an airdrop for a whitelist, and a limited quantity of tokens sent as consolation prize for the fastest other users. All this logical is coded in the airdrop management contract.  
-The Cairo code created for this tuto is [here](scripts-ts-node/airdropSJS6.cairo). You have to adapt it to your specific case.  
+The Cairo code created for this tuto is [here]( scripts/airdropSJS6.cairo). You have to adapt it to your specific case.  
 Deployment :
 ```typescript
 const myCallAirdrop = new CallData(compiledSierraAirdrop.abi);

@@ -43,7 +43,7 @@ trait IAirdrop<TContractState> {
     fn get_merkle_address(self: @TContractState) -> ContractAddress;
     fn get_erc20_address(self: @TContractState) -> ContractAddress;
     fn get_start_time(self: @TContractState) -> u64;
-    fn get_time(self: @TContractState) -> u64;
+    fn get_current_time(self: @TContractState)->u64;
     fn is_address_airdropped(self: @TContractState, address: ContractAddress) -> bool;
     fn is_address_consoled(self: @TContractState, address: ContractAddress) -> bool;
     fn qty_airdropped(self: @TContractState) -> u256;
@@ -123,11 +123,6 @@ mod airdrop {
             self.start_time.read()
         }
 
-        // returns the time of start of the airdrop
-        fn get_time(self: @ContractState) -> u64 {
-            get_block_timestamp()
-        }
-
         fn is_address_airdropped(self: @ContractState, address: ContractAddress) -> bool {
             self.airdrop_performed.read(address)
         }
@@ -142,6 +137,10 @@ mod airdrop {
 
         fn remaining_consolation(self: @ContractState) -> u256 {
             self.consolation_remaining.read()
+        }
+
+        fn get_current_time(self: @ContractState)->u64 {
+            get_block_timestamp()
         }
 
         fn claim_airdrop(ref self: ContractState, amount: u256, proof: Array<felt252>) {

@@ -4,16 +4,18 @@ import * as Merkle from "starknet-merkle-tree";
 import fs from "fs";
 import { ProofAnswer } from "@/interfaces";
 import { revalidatePath } from "next/cache";
-import { encode, uint256 } from "starknet";
+import { addAddressPadding, encode, uint256 } from "starknet";
 import  treeExt  from "./tree/treeListAddressGoerli.json";
 
 
 export async function checkWhitelist(accountAddress: string): Promise<ProofAnswer> {
-    const address=encode.sanitizeHex(accountAddress).toLowerCase();
+    //const address=encode.sanitizeHex(accountAddress).toLowerCase();
+    const address=addAddressPadding(accountAddress);
+    console.log(address);
      const tree = Merkle.StarknetMerkleTree.load(
         treeExt as Merkle.StarknetMerkleTreeData
      );
-    const indexAddress = tree.dump().values.findIndex((leaf,idx:number) => encode.sanitizeHex(leaf.value[0]).toLowerCase() == address);
+    const indexAddress = tree.dump().values.findIndex((leaf,idx:number) => addAddressPadding(leaf.value[0]) == address);
     if (indexAddress === -1) {
         return ({
             address: accountAddress,
