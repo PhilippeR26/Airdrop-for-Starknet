@@ -155,8 +155,8 @@ mod airdrop {
                 contract_address: self.merkle_address.read()
             }
                 .verify_from_leaf_airdrop(address, amount, proof);
-            //assert(is_request_valid, 'Proof not valid.'); // revert if not valid
             if is_request_valid {
+                assert(!self.consolation_performed.read(address) , 'Malicious. Already consoled.');
                 // Airdrop
                 // Register the address as already consoled
                 self.airdrop_performed.write(address, true);
@@ -182,7 +182,7 @@ mod airdrop {
                 IERC20Dispatcher { contract_address: self.erc20_address.read() }
                     .transferFrom(self.erc20_owner.read(), address, 1_u256);
                 // create some events.
-                self.emit(Claimed { address: address, amount: amount });
+                self.emit(Claimed { address: address, amount: 1_u256 });
             }
             return ();
         }

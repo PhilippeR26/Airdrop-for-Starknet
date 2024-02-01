@@ -9,7 +9,6 @@ import  treeExt  from "./tree/treeListAddressGoerli.json";
 
 
 export async function checkWhitelist(accountAddress: string): Promise<ProofAnswer> {
-    //const address=encode.sanitizeHex(accountAddress).toLowerCase();
     const address=addAddressPadding(accountAddress);
     console.log(address);
      const tree = Merkle.StarknetMerkleTree.load(

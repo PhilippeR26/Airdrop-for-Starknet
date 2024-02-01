@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
-import { useStoreWallet } from "../ConnectWallet/walletContext";
 import { Button, Spinner } from "@chakra-ui/react";
+import Prides from "react-canvas-confetti/dist/presets/pride";
+import * as Merkle from "starknet-merkle-tree";
+import { Account, Contract, RpcProvider } from "starknet";
+
+import { useStoreWallet } from "../ConnectWallet/walletContext";
 import { checkWhitelist } from "@/app/server/airdropServer";
 import { ProofAnswer } from "@/interfaces";
-import * as Merkle from "starknet-merkle-tree";
 import { airdropAbi } from "@/app/contracts/abis/airdropAbi";
 import { AirdropAddress, devnetPk, myProviderUrl } from "@/app/utils/constants";
-import { Account, Contract, RpcProvider } from "starknet";
 import { useStoreBlock } from "../Block/blockContext";
 import { useStoreAirdrop } from "./airdropContext";
 
@@ -19,7 +21,7 @@ export default function Airdrop() {
   const [isProcessStarted, setIsProcessStarted] = useState<Boolean>(false);
   //const [isSuccess, setIsSuccess] = useState<Boolean>(false);
   const isAirdropSuccess = useStoreAirdrop((state) => state.isAirdropSuccess);
-    const setIsAirdropSuccess = useStoreAirdrop((state) => state.setIsAirdropSuccess);
+  const setIsAirdropSuccess = useStoreAirdrop((state) => state.setIsAirdropSuccess);
 
   const [isError, setIsError] = useState<Boolean>(false);
   const [amount, setAmount] = useState<bigint>(0n);
@@ -87,12 +89,14 @@ export default function Airdrop() {
         const whiteListAnswer: ProofAnswer = await checkWhitelist(addressAccountFromContext);
         setIsEligible(whiteListAnswer.isWhiteListed);
         console.log("address in whitelist?", addressAccountFromContext, whiteListAnswer.isWhiteListed);
-        
+
         setAmount(whiteListAnswer.amount);
         setProof(whiteListAnswer.proof);
         setLeaf(whiteListAnswer.leaf);
         setLeafHash(whiteListAnswer.leafHash);
         setIsChecked(true);
+        const isConsol = await airdropContract.call("is_address_consoled", [addressAccountFromContext]) as boolean;
+        setIsConsoled(isConsol);
       }
     }
     fetchData().catch(console.error);
@@ -101,7 +105,7 @@ export default function Airdrop() {
 
   useEffect(() => {
     const fetchIsConsoled = async () => {
-      const isConsol = await airdropContract.call("is_address_consoled",[addressAccountFromContext]) as boolean;
+      const isConsol = await airdropContract.call("is_address_consoled", [addressAccountFromContext]) as boolean;
       console.log("isConsoled", isConsol);
       setIsConsoled(isConsol);
     }
@@ -120,6 +124,7 @@ export default function Airdrop() {
               {!isAirdropSuccess && !isError && (<> <Spinner color="blue" size="sm" mr={4} />  Processing reward ... </>)}
               {isAirdropSuccess ? (<>
                 Consolation prize successfully processed.
+                <Prides autorun={{ speed: 5 }} />
               </>) : (<>
                 {isError && (<>
                   Processing has failed.
@@ -155,12 +160,16 @@ export default function Airdrop() {
               {isAirdropSuccess ? (<>
                 Claim successfully processed. <br></br>
                 Do not forget to configure your wallet to display this token.
+                <Prides autorun={{ speed: 5 }} />
               </>) : (<>
                 {isError && (<>
                   Processing has failed.
                 </>)}
               </>)}
             </>) : (<>
+            {isConsoled ?(<>
+              You should be awarded, but you already received a consolation prize. 
+            </>):(<>
               You are eligible for this airdrop <br></br>
               <Button
                 colorScheme='green'
@@ -171,6 +180,7 @@ export default function Airdrop() {
               >
                 Claim {amount.toString()} SJS6 token
               </Button>
+              </>)}
             </>
             )}
           </>

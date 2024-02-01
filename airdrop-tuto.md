@@ -1,5 +1,6 @@
 # TUTORIAL
 # Create your own airdrop
+This tutorial assumes that you have a good understanding of React, the Next.js framework, the Starknet network and Starknet.js.
 
 ## Architecture :
 The creation of an airdrop is splitted in several activities :
@@ -8,9 +9,9 @@ A node.js script is used to generate the Merkle tree.
 A server is necessary to store this tree.  
 A smart-contract is also necessary to store the root of the tree.
 2. Create the DAPP  
-The DAPP is mostly in the frontend, but some coding is also necessary in the server. Here, the Next.js framework is chosen, because it can handle easily both the frontend and the server code.
+The DAPP is mostly in the frontend, but some code is also necessary in the server. Here, the Next.js framework is chosen, because it can handle easily both the frontend and the server code.
 3. Create the necessary smart-contracts  
-Some smart-contract are necessary to secure and perform the airdrop.
+Some smart-contracts are necessary to secure and perform the airdrop.
 <br></br>
 
 ![architecture](public/architecture-airdrop.png)
@@ -39,7 +40,7 @@ These arrays are called the **leaves** of the Merkle tree.
 I added 3 of my personal accounts, to be able to perform some tests.  
 The result is [here]( scripts/listAddressesGoerli.json) .
 
-Several TS codes will now be used, using the Goerli Testnet.  
+Several TS codes will now be used, using the Starknet Goerli Testnet.  
 > All these scripts can be read [here](./ scripts), and you can run them directly in my tuto repo [here](https://github.com/PhilippeR26/starknet.js-workshop-typescript/tree/main/src/scripts/merkleTree/airdropSJS6Goerli).
 
 The first script is using the [starknet-merkle-tree](https://www.npmjs.com/package/starknet-merkle-tree) library.
@@ -115,24 +116,54 @@ In this chapter, we have created the Merkle tree, and all the necessary contract
 In the DAPP, all the specific constants necessary for the airdrop are in `utils/constants`, [here](src/app/utils/constants.ts).
 
 You have some main Components :
-- `Block`, with its Zustand context. The block content is read each 10 seconds (including the block number). Each time the bock number is changing, many updates are triggered in the DAPP.
-- `ConnectWallet`, also with its context. It contains all the code to connect a wallet account, read its address and read the  `Account` instance. Do not use the provider that is available in the Wallet ; it's not reliable. You have to use your own rpcProvider (here a Blast provider).
-- `GetBalance`, that is able to display the balance of any account for any token. An evolution has been created in `GetBalanceAirdrop`, that update the balance just after the airdrop transaction.
-- `Airdrop` and `Claim`, that holds the complex logical of all possible cases of this airdrop. Necessary data are read by using my rpcProvider, and transactions are launched using the Account instance provided by the wallet.
+- `Block`, with its Zustand context. The block content is read each 10 seconds (including the block number). Each time the block number is changing, many updates are triggered in the DAPP.
+- `ConnectWallet`, also with its context. It contains all the code to connect a wallet account, read its address and get the  `Account` instance. Do not use the provider that is available in the `Wallet` object ; it's not reliable. You have to use your own rpcProvider (here a Blast provider).
+- `GetBalance`, is able to display the balance of any account for any token. An evolution has been created in `GetBalanceAirdrop`, that update the balance just after the airdrop transaction.
+- `Airdrop` and `Claim`, that holds the complex logical of all possible cases of this airdrop. Starknet data are read from the rpcProvider, and transactions are launched using the Account instance provided by the browser wallet. The Merkle tree data are asked to the server, using a [Next.js Server Action](src/app/server/airdropServer.ts) ; this function calls the [starknet-merkle-tree](https://www.npmjs.com/package/starknet-merkle-tree) library to get the proof corresponding to the account address.
 
 # 3. Execution of the airdrop in Starknet :
 The DAPP is interacting with Starknet for :
 - Read the ERC20contract :
-- Read the last approved block :
+  ```typescript
+  const resp = await erc20Contract.call("balanceOf", [accountAddress]) as bigint;
+  ```
+- Read the last block :
+  ```typescript
+  const block = await FrontendProvider.getBlock("latest");
+  ```
 - Read the quantity of remaining tokens for the consolation prizes :
+  ```typescript
+  const qty_consolation_remaining = await airdropContract.call("remaining_consolation") as bigint;
+  ```
 - Read the quantity of tokens already airdropped :
+  ```typescript
+  const qty_airdrop = await airdropContract.call("qty_airdropped") as bigint;
+  ```
 - Check if an address is already airdropped :
+  ```typescript
+  const isAirdropped = await airdropContract.call("is_address_airdropped", [addressAccountFromContext]) as boolean;
+  ```
 - Check if an address has already received a consolation prize :
+  ```typescript
+  const isConsol = await airdropContract.call("is_address_consoled",[addressAccountFromContext]) as boolean;
+  ```
 - Execute the airdrop :
+  ```typescript
+  const claimCall = airdropContract.populate("claim_airdrop", {
+      amount: amount,
+      proof: proof,
+    })
+  const resp = await account!.execute(claimCall, undefined, {});
+  const txR = await myProvider.waitForTransaction(resp.transaction_hash);
+  ```
 
 In the Airdrop contract, 2 mappings are managed :
 - one for the airdrops already performed.
 - one for the addresses that have already received a consolation prize.
 
+When you invoke the `claim_airdrop` function, some checks are performed :
+- The address is not yet airdropped.
+- The airdrop is active.
+- If the Merkle proof is valid, and if no consolation prize has been already performed for this address (a case that should not occur in the DAPP ; only from malicious actors), the airdrop is performed.
 
 
