@@ -108,7 +108,7 @@ export default function Airdrop() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (isConnected) {
+      if (isConnected && addressAccountFromContext) {
         // ask to server 
         const whiteListAnswer: ProofAnswer = await checkWhitelist(addressAccountFromContext);
         setIsEligible(whiteListAnswer.isWhiteListed);
@@ -125,18 +125,20 @@ export default function Airdrop() {
     }
     fetchData().catch(console.error);
   }
-    , [isConnected]);
+    , [isConnected, addressAccountFromContext]);
 
   useEffect(() => {
     const fetchIsConsoled = async () => {
-      const isConsol = await airdropContract.call("is_address_consoled", [addressAccountFromContext]) as boolean;
-      console.log("isConsoled", isConsol);
-      const remainingConsolation = await airdropContract.call("remaining_consolation", []) as bigint;
-      setAvailableConsolation(remainingConsolation);
+      if (isConnected && addressAccountFromContext) {
+        const isConsol = await airdropContract.call("is_address_consoled", [addressAccountFromContext]) as boolean;
+        console.log("isConsoled", isConsol);
+        const remainingConsolation = await airdropContract.call("remaining_consolation", []) as bigint;
+        setAvailableConsolation(remainingConsolation);
+      }
+      fetchIsConsoled().catch(console.error);
     }
-    fetchIsConsoled().catch(console.error);
   }
-    , [isConnected, blockFromContext]);
+    , [isConnected, addressAccountFromContext, blockFromContext]);
 
   return (
     <>

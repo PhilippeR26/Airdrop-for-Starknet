@@ -11,7 +11,7 @@ import { useStoreWallet } from '../ConnectWallet/walletContext';
 
 
 import { erc20Abi } from '../../../contracts/abis/ERC20abi';
-import {  myProviderUrl } from '@/app/utils/constants';
+import { myProviderUrl } from '@/app/utils/constants';
 import { formatBalance } from '@/app/utils/formatBalance';
 import { useStoreAirdrop } from '../Airdrop/airdropContext';
 
@@ -23,7 +23,7 @@ export default function GetBalance({ tokenAddress }: Props) {
     const accountAddress = useStoreWallet((state) => state.addressAccount);
     const isAirdropSuccess = useStoreAirdrop((state) => state.isAirdropSuccess);
     const setIsAirdropSuccess = useStoreAirdrop((state) => state.setIsAirdropSuccess);
-    
+
     const [balance, setBalance] = useState<bigint | undefined>(undefined);
     const [decimals, setDecimals] = useState<number>(18)
     const [symbol, setSymbol] = useState<string>("");
@@ -33,8 +33,8 @@ export default function GetBalance({ tokenAddress }: Props) {
     useEffect(() => {
         const fetchData = async () => {
             setIsAirdropSuccess(false);
-            const resp1 = await erc20Contract.call("decimals") ;
-            console.log("addr ERC20=",erc20Contract.address);
+            const resp1 = await erc20Contract.call("decimals");
+            console.log("addr ERC20=", erc20Contract.address);
             console.log("resDecimals=", resp1);
             setDecimals(Number(resp1));
 
@@ -50,13 +50,15 @@ export default function GetBalance({ tokenAddress }: Props) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const resp3 = await erc20Contract.call("balanceOf", [accountAddress]) as bigint;
-            console.log("balance=", resp3);
-            setBalance(resp3);
+            if (!!accountAddress) {
+                const resp3 = await erc20Contract.call("balanceOf", [accountAddress]) as bigint;
+                console.log("balance=", resp3);
+                setBalance(resp3);
+            }
         }
         fetchData().catch(console.error);
     }
-        , [blockFromContext.blockNumber, decimals, isAirdropSuccess]); // balance updated at each block
+        , [blockFromContext.blockNumber, decimals, isAirdropSuccess, accountAddress]); // balance updated at each block
 
     return (
         <>

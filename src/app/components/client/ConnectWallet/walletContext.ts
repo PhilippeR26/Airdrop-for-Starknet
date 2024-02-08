@@ -5,7 +5,7 @@ import { type StarknetWindowObject } from "./core/StarknetWindowObject"
 
 export interface WalletState {
     wallet: StarknetWindowObject | undefined,
-    setMyWallet: (wallet: StarknetWindowObject) => void,
+    setMyWallet: (wallet: StarknetWindowObject|undefined) => void,
     addressAccount: string,
     setAddressAccount: (address: string) => void,
     chain: string,
@@ -22,7 +22,7 @@ export interface WalletState {
 
 export const useStoreWallet = create<WalletState>()(set => ({
     wallet: undefined,
-    setMyWallet: (wallet: StarknetWindowObject) => { set(state => ({ wallet: wallet })) },
+    setMyWallet: (wallet: StarknetWindowObject|undefined) => { set(state => ({ wallet: wallet })) },
     addressAccount: "",
     setAddressAccount: (address: string) => { set(state => ({ addressAccount: address })) },
     chain: constants.StarknetChainId.SN_GOERLI,

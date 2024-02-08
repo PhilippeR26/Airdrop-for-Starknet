@@ -107,34 +107,34 @@ export default function SelectWallet() {
   // }
 
   // without get-starknet
-  const handleSelectedWalletNew = async (wallet: StarknetWindowObject) => {
-    let respRequest: Permission[] = [];
-    try {
-      console.log("Trying to connect wallet=", wallet);
+  // const handleSelectedWalletNew = async (wallet: StarknetWindowObject) => {
+  //   let respRequest: Permission[] = [];
+  //   try {
+  //     console.log("Trying to connect wallet=", wallet);
 
-      respRequest = await wallet.request({ type: "wallet_getPermissions" });
-      console.log("permissions =", respRequest)
-    } catch (err) {
-      console.log("Error when request permissions :", err);
-    }
-    // .includes(Permission.Accounts)
-    if (respRequest[0]=="accounts") {
-      console.log("permissions=OK");
-      //setHasPermissions(true);
-      setMyWallet(wallet); // zustand
-      setConnected(true); // zustand
-      const accounts = await wallet.request({ type: "wallet_requestAccounts" });
-      console.log("account address from wallet =", accounts);
-      // setAccount(accounts[0]); // zustand
-      setAddressAccount(addAddressPadding(accounts[0])); // zustand
-      const chainId = (await wallet.request({ type: "wallet_requestChainId" })).toString();
-      setChain(chainId);
-      setSelectWalletUI(false);
-    } else {
-      console.log("permissions=Denied");
-    }
+  //     respRequest = await wallet.request({ type: "wallet_getPermissions" });
+  //     console.log("permissions =", respRequest)
+  //   } catch (err:any) {
+  //     console.log("Error when request permissions :", err.message);
+  //   }
+  //   // .includes(Permission.Accounts)
+  //   if (respRequest[0]=="accounts") {
+  //     console.log("permissions=OK");
+  //     //setHasPermissions(true);
+  //     setMyWallet(wallet); // zustand
+  //     setConnected(true); // zustand
+  //     const accounts = await wallet.request({ type: "wallet_requestAccounts" });
+  //     console.log("account address from wallet =", accounts);
+  //     // setAccount(accounts[0]); // zustand
+  //     setAddressAccount(addAddressPadding(accounts[0])); // zustand
+  //     const chainId = (await wallet.request({ type: "wallet_requestChainId" })).toString();
+  //     setChain(chainId);
+  //     setSelectWalletUI(false);
+  //   } else {
+  //     console.log("permissions=Denied");
+  //   }
 
-  }
+  // }
 
   useEffect(
     () => {
@@ -181,7 +181,7 @@ export default function SelectWallet() {
                     <Button id={"wId" + index.toString()}
                       leftIcon={<Image src={iconW} width={30} />}
                       onClick={() => {
-                        handleSelectedWalletNew(wallet.wallet);
+                        setMyWallet(wallet.wallet); // zustand
                         setSelectWalletUI(false);
                         onClose()
                       }} >{wallet.wallet.name + ' ' + wallet.wallet.version}
