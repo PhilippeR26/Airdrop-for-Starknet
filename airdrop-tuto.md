@@ -116,8 +116,8 @@ In this chapter, we have created the Merkle tree, and all the necessary contract
 In the DAPP, all the specific constants necessary for the airdrop are in `utils/constants`, [here](src/app/utils/constants.ts).
 
 You have some main Components :
-- `Block`, with its Zustand context. The block content is read each 10 seconds (including the block number). Each time the block number is changing, many updates are triggered in the DAPP.
-- `ConnectWallet`, also with its context. It contains all the code to connect a wallet account, read its address and get the  `Account` instance. Do not use the provider that is available in the `Wallet` object ; it's not reliable. You have to use your own rpcProvider (here a Blast provider).
+- `Block`, with its Zustand context. The block content is read each 10 seconds (that includes the block number). Each time the block number is changing, many updates are triggered in the DAPP.
+- `ConnectWallet`, also with its context. It contains all the code to connect a wallet account, read its address and get the  `Account` instance. Do not use the provider that is available in the `Wallet` object ; it's not reliable. You have to use your own rpcProvider (here a Blast provider) to read the network. The `account` instance has to be used only to write to the network.
 - `GetBalance`, is able to display the balance of any account for any token. An evolution has been created in `GetBalanceAirdrop`, that update the balance just after the airdrop transaction.
 - `Airdrop` and `Claim`, that holds the complex logical of all possible cases of this airdrop. Starknet data are read from the rpcProvider, and transactions are launched using the Account instance provided by the browser wallet. The Merkle tree data are asked to the server, using a [Next.js Server Action](src/app/server/airdropServer.ts) ; this function calls the [starknet-merkle-tree](https://www.npmjs.com/package/starknet-merkle-tree) library to get the proof corresponding to the account address.
 

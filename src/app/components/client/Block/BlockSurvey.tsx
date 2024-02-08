@@ -21,8 +21,8 @@ export default function BlockSurvey({ providerUrl }: Props) {
                         timeStamp: resp.timestamp,
                         blockHash: resp.block_hash ?? "",
                         blockNumber: resp.block_number,
-                        gasPrice: resp.gas_price ?? "" // Starknet.js v5
-                        // gasPrice: resp.l1_gas_price.price_in_wei ?? "" // Starknet.js v6
+                        //gasPrice: resp.gas_price ?? "" // Starknet.js v5
+                         gasPrice: resp.l1_gas_price.price_in_wei ?? "" // Starknet.js v6
                     }
                     )
                 }

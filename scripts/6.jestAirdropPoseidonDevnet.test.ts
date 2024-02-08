@@ -33,6 +33,9 @@ describe('Airdrop contract tests', () => {
     const accountAddress3 = "0x4f348398f859a55a0c80b1446c5fdc37edb3a8478a32f10764659fc241027d3";
     const privateKey3 = "0xa641611c17d4d92bd0790074e34beeb7";
     const account3 = new Account(provider, accountAddress3, privateKey3);
+    const accountAddress8 = "0x4d8bb41636b42d3c69039f3537333581cc19356a0c93904fa3e569498c23ad0";
+    const privateKey8 = "0xb467066159b295a7667b633d6bdaabac";
+    const account8 = new Account(provider, accountAddress8, privateKey8);
     const accountAddress9 = "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1";
     const privateKey9 = "0x57b2f8431c772e647712ae93cc616638";
     const account9 = new Account(provider, accountAddress9, privateKey9);
@@ -41,6 +44,7 @@ describe('Airdrop contract tests', () => {
     let merkleVerifyContract: Contract;
     let airdropContract: Contract;
     let tree: Merkle.StarknetMerkleTree;
+    const initialConsolation = 3n;
     beforeAll(async () => {
         resetDevnetNow();
         console.log("Provider connected to Starknet-devnet-rs");
@@ -103,7 +107,7 @@ describe('Airdrop contract tests', () => {
             merkle_address: merkleAddress,
             erc20_owner: account0.address,
             start_time: 10, // no date of airdrop start
-            consolation_remaining: 10_000,
+            consolation_remaining: initialConsolation,
         });
         const deployResponse = await account0.declareAndDeploy({
             contract: compiledSierraAirdrop,
@@ -139,7 +143,7 @@ describe('Airdrop contract tests', () => {
         const getQtyAirdropped = await airdropContract.call("qty_airdropped", []);
         expect(getQtyAirdropped).toBe(0n);
         const getRemaining = await airdropContract.call("remaining_consolation", []);
-        expect(getRemaining).toBe(10_000n);
+        expect(getRemaining).toBe(initialConsolation);
         const done = await airdropContract.call("is_address_airdropped", [account9.address]);
         expect(done).toBe(false);
     });
@@ -184,7 +188,7 @@ describe('Airdrop contract tests', () => {
         expect(qtyAirdrop).toBe(900n);
 
         const remainCons = await airdropContract.call("remaining_consolation", []);
-        expect(remainCons).toBe(10_000n);
+        expect(remainCons).toBe(initialConsolation);
 
         let mess: string = "";
         try { const res = await account1.execute(myCall) } catch (err) {
@@ -207,11 +211,11 @@ describe('Airdrop contract tests', () => {
         const isCons2 = await airdropContract.call("is_address_consoled", [account2.address]);
         expect(isCons2).toBe(false);
         const myCall3 = airdropContract.populate("claim_airdrop", {
-            amount:1,
+            amount: 1,
             proof: [0] // voluntarily wrong proof, to obtain a consolation
         });
         const res3 = await account2.execute(myCall3); // get consolation 
-        await provider.waitForTransaction(res3.transaction_hash); 
+        await provider.waitForTransaction(res3.transaction_hash);
         const isCons3 = await airdropContract.call("is_address_consoled", [account2.address]);
         expect(isCons3).toBe(true);
         const claimAddress4 = addAddressPadding(account2.address);
@@ -260,7 +264,7 @@ describe('Airdrop contract tests', () => {
         expect(qtyAirdrop).toBe(900n);
 
         const remainCons = await airdropContract.call("remaining_consolation", []);
-        expect(remainCons).toBe(9_998n);
+        expect(remainCons).toBe(initialConsolation - 2n);
 
         let mess: string = "";
         try { const res = await account9.execute(myCall) } catch (err) {
@@ -268,6 +272,17 @@ describe('Airdrop contract tests', () => {
         }
         expect(mess.includes("Address already consoled")).toBe(true); // try to claim again
 
+        
+        const remainCons2 = await airdropContract.call("remaining_consolation", []);
+        expect(remainCons2).toBe(1n);
+        const res = await account8.execute(myCall);
+        const remainCons3 = await airdropContract.call("remaining_consolation", []);
+        expect(remainCons3).toBe(0n);
+        let mess2: string = "";
+        try { const res = await account8.execute(myCall) } catch (err) {
+            mess2 = (err as Error).message;
+        }
+        expect(mess2.includes("Too late, no more consol. prize")).toBe(true); // 0 consolation prize
     });
 
     test("claim before start", async () => {
@@ -313,6 +328,6 @@ describe('Airdrop contract tests', () => {
         }
         expect(mess.includes("Airdrop has not started yet.")).toBe(true); // try to claim in advance
 
-        
+
     })
 });

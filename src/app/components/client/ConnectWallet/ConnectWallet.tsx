@@ -1,38 +1,30 @@
 "use client";
 
+import { shortString } from 'starknet';
+import { Button, ChakraProvider } from "@chakra-ui/react";
+
 import { useStoreWallet } from './walletContext';
-import styles from './page.module.css'
-
-import { Box, Button, Center, ChakraProvider, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import { StarknetWindowObject } from "get-starknet";
-import { Account, encode, RpcProvider, shortString, constants as SNconstants } from "starknet";
 import SelectWallet from './SelectWallet';
-import { devnetAccountAddress, networkName } from '@/app/utils/constants';
 
+import { networkName } from '@/app/utils/constants';
 
-export default function ConnectWallet() {
-  const addressAccount = useStoreWallet(state => state.addressAccount);
-  const wallet = useStoreWallet(state => state.wallet)
-
+export default function ConnectWallet() {  
   const displaySelectWalletUI = useStoreWallet(state => state.displaySelectWalletUI);
   const setSelectWalletUI = useStoreWallet(state => state.setSelectWalletUI);
-
+  
   const chainFromContext = useStoreWallet(state => state.chain);
   const setChain = useStoreWallet(state => state.setChain);
-
-  const providerFromContext = useStoreWallet(state => state.provider);
-  const setProvider = useStoreWallet(state => state.setProvider);
-
+  
   const addressAccountFromContext = useStoreWallet(state => state.addressAccount);
   const setAddressAccount = useStoreWallet(state => state.setAddressAccount);
 
   const isConnected = useStoreWallet(state => state.isConnected);
   const setConnected = useStoreWallet(state => state.setConnected);
 
-  const devnetAccount = ()=>{
-    setConnected(true); // zustand
-    setAddressAccount(devnetAccountAddress); // zustand
-  }
+  // const devnetAccount = ()=>{
+  //   setConnected(true); // zustand
+  //   setAddressAccount(devnetAccountAddress); // zustand
+  // }
 
   return (
     <ChakraProvider>
@@ -46,7 +38,7 @@ export default function ConnectWallet() {
               marginTop={1}
               marginBottom={1}
               onClick={() => setSelectWalletUI(true)} // Mainnet
-              // onClick={devnetAccount} // devnet
+            // onClick={devnetAccount} // devnet
             >
               Connect a {networkName} Wallet
             </Button>

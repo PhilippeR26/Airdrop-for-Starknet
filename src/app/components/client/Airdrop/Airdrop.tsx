@@ -22,13 +22,13 @@ export default function Airdrop() {
   const chainId = useStoreWallet(state => state.chain);
 
   function isValidNetwork(): boolean {
-    return chainId==shortString.encodeShortString(networkName); // devnet
+    return chainId==shortString.encodeShortString(networkName); 
   }
 
 
   useEffect(() => {
     const fetchData = async () => {
-      if (isConnected) {
+      if (isConnected && !!addressAccountFromContext) {
         console.log("address airdropped?", addressAccountFromContext);
         const isAirdropped = await airdropContract.call("is_address_airdropped", [addressAccountFromContext]) as boolean;
         setIsAirdropped(isAirdropped);
@@ -39,7 +39,7 @@ export default function Airdrop() {
     }
     fetchData().catch(console.error);
   }
-    , [isConnected, blockFromContext]);
+    , [isConnected, blockFromContext, addressAccountFromContext]);
 
   return (
     <>
