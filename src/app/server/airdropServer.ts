@@ -2,7 +2,7 @@
 
 import * as Merkle from "starknet-merkle-tree";
 import fs from "fs";
-import { ProofAnswer } from "@/interfaces";
+import type { ProofAnswer } from "@/interfaces";
 import { revalidatePath } from "next/cache";
 import { addAddressPadding, encode, uint256 } from "starknet";
 //                           👇👇👇 be sure to link to the right file

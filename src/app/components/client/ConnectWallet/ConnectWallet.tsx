@@ -7,7 +7,7 @@ import { useStoreWallet } from './walletContext';
 import SelectWallet from './SelectWallet';
 
 import { networkName } from '@/app/utils/constants';
-import { StarknetWindowObject } from './core/StarknetWindowObject';
+import type { StarknetWindowObject } from './core/StarknetWindowObject';
 import { Permission } from './core/rpcMessage';
 import { useEffect } from 'react';
 
@@ -47,15 +47,15 @@ export default function ConnectWallet() {
     // if (respRequest[0]=="accounts") {
     //   console.log("permissions=OK");
     //setHasPermissions(true);
-    setMyWallet(wallet); // zustand
-    setConnected(true); // zustand
-    const accounts = await wallet.request({ type: "wallet_requestAccounts" });
-    console.log("account address from wallet =", accounts);
+    // setMyWallet(wallet); // zustand
+    const accountAddress = await wallet.request({ type: "wallet_requestAccounts" });
+    console.log("account address from wallet =", accountAddress);
     // setAccount(accounts[0]); // zustand
-    setAddressAccount(addAddressPadding(accounts[0])); // zustand
+    setAddressAccount(addAddressPadding(accountAddress[0])); // zustand
     const chainId = (await wallet.request({ type: "wallet_requestChainId" })).toString();
-    setChain(chainId);
-    setSelectWalletUI(false);
+    setChain(chainId); // zustand
+    setSelectWalletUI(false); // zustand
+    setConnected(true); // zustand
     // } else {
     //   console.log("permissions=Denied");
     // }

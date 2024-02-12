@@ -117,7 +117,9 @@ In the DAPP, all the specific constants necessary for the airdrop are in `utils/
 
 You have some main Components :
 - `Block`, with its Zustand context. The block content is read each 10 seconds (that includes the block number). Each time the block number is changing, many updates are triggered in the DAPP.
-- `ConnectWallet`, also with its context. It contains all the code to connect a wallet account, read its address and get the  `Account` instance. Do not use the provider that is available in the `Wallet` object ; it's not reliable. You have to use your own rpcProvider (here a Blast provider) to read the network. The `account` instance has to be used only to write to the network.
+ 
+- `SelectWallet`, that will scan the `window` object of your browser, find all the Starknet wallet extensions, and check which wallets are compatible with Starknet.js v6 (so compatible with get-starknet v3.0.2). A wallet list is displayed and you have to select the one you want to use.
+- `ConnectWallet`, with its context. It contains the code to connect a browser wallet account to your DAPP. It will create a Starknet.js v6 `WalletAccount` instance. You will use it for all your communications with Starknet. But under the hood, the browser wallet will be used for all actions that will request to write in Starknet, and your own rpcProvider (here a Blast provider) will be used to read the network. 
 - `GetBalance`, is able to display the balance of any account for any token. An evolution has been created in `GetBalanceAirdrop`, that update the balance just after the airdrop transaction.
 - `Airdrop` and `Claim`, that holds the complex logical of all possible cases of this airdrop. Starknet data are read from the rpcProvider, and transactions are launched using the Account instance provided by the browser wallet. The Merkle tree data are asked to the server, using a [Next.js Server Action](src/app/server/airdropServer.ts) ; this function calls the [starknet-merkle-tree](https://www.npmjs.com/package/starknet-merkle-tree) library to get the proof corresponding to the account address.
 

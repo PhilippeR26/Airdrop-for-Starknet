@@ -1,5 +1,6 @@
 "use client";
-import { AirdropAddress, erc20Address, myProviderUrl, networkName } from "@/app/utils/constants";
+import {  AirdropAddress } from "@/app/utils/constants";
+import {  erc20Address, myProviderUrl, networkName } from "@/app/utils/constants";
 import { useStoreWallet } from "../ConnectWallet/walletContext";
 import GetBalance from "../Contract/GetBalance";
 import { useEffect, useState } from "react";

@@ -6,12 +6,12 @@ import { Account, CallData, Contract, RpcProvider } from "starknet";
 
 import { useStoreWallet } from "../ConnectWallet/walletContext";
 import { checkWhitelist } from "@/app/server/airdropServer";
-import { ProofAnswer } from "@/interfaces";
+import type { ProofAnswer } from "@/interfaces";
 import { airdropAbi } from "@/app/contracts/abis/airdropAbi";
 import { AirdropAddress, myProviderUrl } from "@/app/utils/constants";
 import { useStoreBlock } from "../Block/blockContext";
 import { useStoreAirdrop } from "./airdropContext";
-import { AddInvokeTransactionParameters } from "../ConnectWallet/core/rpcMessage";
+import type { AddInvokeTransactionParameters } from "../ConnectWallet/core/rpcMessage";
 
 
 export default function Airdrop() {

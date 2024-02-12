@@ -11,9 +11,11 @@ type ValidWallet = {
   isValid: boolean;
 }
 
+// fn to identify Starknet wallets.
+// Can also be performed by get-starknet.
 export async function scanObjectForWallets(
   obj: Record<string, any>, // Browser window object
-  isWalletObject: (wallet: any) => boolean, // fn to identify Starknet wallets
+  isWalletObject: (wallet: any) => boolean, 
 ): Promise<ValidWallet[]> {
   const AllObjectsNames: string[] = Object.getOwnPropertyNames(obj); // names of objects of level -1 of window
   const listNames: string[] = AllObjectsNames.filter((name: string) =>
@@ -75,66 +77,12 @@ export default function SelectWallet() {
   const myWallet = useStoreWallet(state => state.wallet);
   const setMyWallet = useStoreWallet(state => state.setMyWallet);
 
-  const isConnected = useStoreWallet(state => state.isConnected);
-  const setConnected = useStoreWallet(state => state.setConnected);
 
   const displaySelectWalletUI = useStoreWallet(state => state.displaySelectWalletUI);
   const setSelectWalletUI = useStoreWallet(state => state.setSelectWalletUI);
 
-  const setAccount = useStoreWallet(state => state.setAccount);
-  const setChain = useStoreWallet(state => state.setChain);
-  const setAddressAccount = useStoreWallet(state => state.setAddressAccount);
+    const [walletList, setWalletList] = useState<ValidWallet[]>([]);
 
-  const [walletList, setWalletList] = useState<ValidWallet[]>([]);
-  //const [hasPermissions, setHasPermissions] = useState<boolean>(false);
-
-
-  // ******** with get-starknet
-  // const handleSelectedWallet = async (wallet: StarknetWindowObject) => {
-  //   console.log("Trying to connect wallet=", wallet);
-  //   await wallet.enable({ starknetVersion: "v5" } as any);
-  //   setConnected(true); // zustand
-  //   setMyWallet(wallet); // zustand
-  //   setAccount(wallet.account); // zustand
-  //   setAddressAccount(encode.sanitizeHex(wallet.account.address).toLowerCase()); // zustand
-  //   if (wallet.chainId) {
-  //     setChain(wallet.chainId.startsWith("0x") ? wallet.chainId : shortString.encodeShortString(wallet.chainId));
-  //   } else {
-  //     setChain(constants.StarknetChainId.SN_MAIN);
-  //   }
-  //   setSelectWalletUI(false);
-  //   // console.log("End of handleSelectedWallet", isConnected);
-  // }
-
-  // without get-starknet
-  // const handleSelectedWalletNew = async (wallet: StarknetWindowObject) => {
-  //   let respRequest: Permission[] = [];
-  //   try {
-  //     console.log("Trying to connect wallet=", wallet);
-
-  //     respRequest = await wallet.request({ type: "wallet_getPermissions" });
-  //     console.log("permissions =", respRequest)
-  //   } catch (err:any) {
-  //     console.log("Error when request permissions :", err.message);
-  //   }
-  //   // .includes(Permission.Accounts)
-  //   if (respRequest[0]=="accounts") {
-  //     console.log("permissions=OK");
-  //     //setHasPermissions(true);
-  //     setMyWallet(wallet); // zustand
-  //     setConnected(true); // zustand
-  //     const accounts = await wallet.request({ type: "wallet_requestAccounts" });
-  //     console.log("account address from wallet =", accounts);
-  //     // setAccount(accounts[0]); // zustand
-  //     setAddressAccount(addAddressPadding(accounts[0])); // zustand
-  //     const chainId = (await wallet.request({ type: "wallet_requestChainId" })).toString();
-  //     setChain(chainId);
-  //     setSelectWalletUI(false);
-  //   } else {
-  //     console.log("permissions=Denied");
-  //   }
-
-  // }
 
   useEffect(
     () => {
@@ -144,7 +92,6 @@ export default function SelectWallet() {
       }
       console.log("Launch select wallet window.");
       fetchData().then((wallets) => setWalletList(wallets));
-      //console.log("SelectWallet.wallets =", wallets);
       onOpen();
       return () => { }
     },
