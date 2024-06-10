@@ -11,11 +11,13 @@ import { airdropAbi } from "@/app/contracts/abis/airdropAbi";
 import { AirdropAddress, myProviderUrl } from "@/app/utils/constants";
 import { useStoreBlock } from "../Block/blockContext";
 import { useStoreAirdrop } from "./airdropContext";
-import type { AddInvokeTransactionParameters } from "../ConnectWallet/core/rpcMessage";
+import type { AddInvokeTransactionParameters } from "get-starknet-core";
 
 
 export default function Airdrop() {
   const myWallet = useStoreWallet(state => state.wallet);
+  const myWalletAccount = useStoreWallet(state => state.myWalletAccount);
+
   const [isEligible, setIsEligible] = useState<Boolean>(false);
   const [isConsoled, setIsConsoled] = useState<Boolean>(true);
   const [availableConsolation, setAvailableConsolation] = useState<bigint>(10000n);
@@ -35,32 +37,24 @@ export default function Airdrop() {
   const addressAccountFromContext = useStoreWallet(state => state.addressAccount);
   const [myProvider] = useState<RpcProvider>(new RpcProvider({ nodeUrl: myProviderUrl }));
   const [airdropContract] = useState<Contract>(new Contract(airdropAbi, AirdropAddress, new RpcProvider({ nodeUrl: myProviderUrl })));
-  // const account = useStoreWallet(state => state.account); // no devnet
-  // const [account] = useState<Account>(new Account(new RpcProvider({ nodeUrl: myProviderUrl }), addressAccountFromContext, devnetPk)); //devnet
   const accountAddress = useStoreWallet(state => state.addressAccount);
   const claimAirdrop = async () => {
     setIsProcessStarted(true);
     try {
-      //const resp = await account!.execute(claimCall, undefined, {});
-      const claimCall = airdropContract.populate("claim_airdrop", {
+       const claimCall = airdropContract.populate("claim_airdrop", {
         amount: amount,
         proof: proof,
       });
-      const myParams: AddInvokeTransactionParameters = {
-        calls: [{
-          contract_address: claimCall.contractAddress,
-          entrypoint: claimCall.entrypoint,
-          calldata: claimCall.calldata as string[]
-        }]
-      }
-      const resp = await myWallet!.request({ type: "starknet_addInvokeTransaction", params: myParams });
-      const txR = await myProvider.waitForTransaction(resp.transaction_hash);
-      if (txR.execution_status == "SUCCEEDED") {
-        setIsError(false);
-        setIsAirdropSuccess(true);
-      } else {
-        setIsAirdropSuccess(false);
-        setIsError(true);
+     const resp = await myWalletAccount?.execute(claimCall);
+      if (resp) {
+        const txR = await myProvider.waitForTransaction(resp.transaction_hash);
+        if (txR.isSuccess()) {
+          setIsError(false);
+          setIsAirdropSuccess(true);
+        } else {
+          setIsAirdropSuccess(false);
+          setIsError(true);
+        }
       }
     } catch (err) {
       console.log("Claim invocation failed :", err);
@@ -77,26 +71,20 @@ export default function Airdrop() {
       proof: ["0x00"],
     })
     try {
-      // const resp = await account!.execute(claimCall, undefined, {});
-      const claimCall = airdropContract.populate("claim_airdrop", {
+     const claimCall = airdropContract.populate("claim_airdrop", {
         amount: 1,
         proof: [0],
       });
-      const myParams: AddInvokeTransactionParameters = {
-        calls: [{
-          contract_address: claimCall.contractAddress,
-          entrypoint: claimCall.entrypoint,
-          calldata: claimCall.calldata as string[]
-        }]
-      }
-      const resp = await myWallet!.request({ type: "starknet_addInvokeTransaction", params: myParams });
-      const txR = await myProvider.waitForTransaction(resp.transaction_hash);
-      if (txR.execution_status == "SUCCEEDED") {
-        setIsError(false);
-        setIsAirdropSuccess(true);
-      } else {
-        setIsAirdropSuccess(false);
-        setIsError(true);
+      const resp = await myWalletAccount?.execute(claimCall);
+      if (resp) {
+        const txR = await myProvider.waitForTransaction(resp.transaction_hash);
+        if (txR.isSuccess()) {
+          setIsError(false);
+          setIsAirdropSuccess(true);
+        } else {
+          setIsAirdropSuccess(false);
+          setIsError(true);
+        }
       }
     } catch (err) {
       console.log("Claim invocation failed :", err);

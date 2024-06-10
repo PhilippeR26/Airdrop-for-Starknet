@@ -20,7 +20,7 @@ A tutorial to create an airdrop DAPP from scratch is available [here](./airdrop-
 This DAPP is using the most famous Starknet libs :
 - [Starknet.js](https://www.starknetjs.com)
 - [Starknet-merkle-tree](https://github.com/PhilippeR26/starknetMerkleTree)
-- [Get-starknet]()
+- [Get-starknet](https://github.com/starknet-io/get-starknet)
 
 and also :
 - Next.js for the DAPP framework

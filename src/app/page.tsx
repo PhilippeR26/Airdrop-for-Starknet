@@ -94,6 +94,9 @@ export default async function Page() {
             . <br></br>
             A tutorial to create a such airdrop is available
             <Link color="blue.700" href='https://github.com/PhilippeR26/Airdrop-for-Starknet/blob/main/airdrop-tuto.md' isExternal> here</Link>
+            .<br></br>
+            Doc and test tool for the new Wallet API
+            <Link color="blue.700" href='https://github.com/PhilippeR26/Starknet-WalletAccount' isExternal> here</Link>
             .
           </Box>
         </Center>

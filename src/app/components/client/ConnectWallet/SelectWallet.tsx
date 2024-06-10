@@ -1,10 +1,9 @@
+import { type StarknetWindowObject } from "get-starknet-core";
 import { Button, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, StackDivider, VStack, useDisclosure } from "@chakra-ui/react";
 import { useStoreWallet } from "./walletContext";
-import { type StarknetWindowObject } from "./core/StarknetWindowObject"
 import { useEffect } from "react";
 import { useState } from "react";
 import { addAddressPadding, constants, encode, shortString } from "starknet";
-import { Permission } from "./core/rpcMessage";
 
 type ValidWallet = {
   wallet: StarknetWindowObject;
@@ -63,10 +62,13 @@ export const isWalletObj = (wallet: any): boolean => {
 const checkCompatibility = async (myWallet: StarknetWindowObject) => {
   let isCompatible: boolean = false;
   try {
-    await myWallet.request({ type: "starknet_supportedSpecs" });
+    // *** TODO : Replace this request by Wallet api version, when available in Wallets.
+    // starknet_supportedSpecs for ArgentX
+    // wallet_supportedSpecs for Braavos
+    await myWallet.request({ type: "wallet_supportedSpecs" });
     isCompatible = true;
   } catch {
-    (err: any) => { console.log("Wallet compatibility failed.\n", err) };
+    (err: any) => { console.log("Wallet compatibility failed.") };
   }
   return isCompatible;
 }

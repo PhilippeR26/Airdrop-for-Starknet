@@ -42,7 +42,7 @@ export default function StatusAirdrop() {
       fontWeight="bold"
       color="red.800"
     >
-      Token address = <Link href={'https://goerli.voyager.online/token/' + erc20Address} isExternal>
+      Token address = <Link href={'https://sepolia.starkscan.co/token/' + erc20Address} isExternal>
         {erc20Address} <ExternalLinkIcon mx='2px' />
       </Link> <br></br>
       <Divider borderColor='gray.800' />

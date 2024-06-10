@@ -6,7 +6,7 @@ import type { ProofAnswer } from "@/interfaces";
 import { revalidatePath } from "next/cache";
 import { addAddressPadding, encode, uint256 } from "starknet";
 //                           👇👇👇 be sure to link to the right file
-import  treeExt  from "./tree/treeListAddressGoerli.json";
+import  treeExt  from "./tree/treeListAddressSepolia.json";
 
 
 export async function checkWhitelist(accountAddress: string): Promise<ProofAnswer> {

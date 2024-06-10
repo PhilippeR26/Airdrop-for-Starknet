@@ -1,4 +1,6 @@
 "use client";
+// balance of a token for an account. Updated each block and after claim.
+
 
 import { useEffect, useState } from 'react';
 import { Text, Center, Spinner, } from "@chakra-ui/react";

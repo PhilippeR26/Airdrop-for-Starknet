@@ -38,27 +38,27 @@ You have to transform these data into a json file. I made it with the find/repla
   
 These arrays are called the **leaves** of the Merkle tree.  
 I added 3 of my personal accounts, to be able to perform some tests.  
-The result is [here]( scripts/listAddressesGoerli.json) .
+The result is [here]( scripts/listAddressesSepolia.json) .
 
-Several TS codes will now be used, using the Starknet Goerli Testnet.  
-> All these scripts can be read [here](./ scripts), and you can run them directly in my tuto repo [here](https://github.com/PhilippeR26/starknet.js-workshop-typescript/tree/main/src/scripts/merkleTree/airdropSJS6Goerli).
+Several TS codes will now be used, using the Starknet Sepolia Testnet.  
+> All these scripts can be read [here](./scripts), and you can run them directly in my tuto repo [here](https://github.com/PhilippeR26/starknet.js-workshop-typescript/tree/main/src/scripts/merkleTree/airdropSJS6Sepolia).
 
 The first script is using the [starknet-merkle-tree](https://www.npmjs.com/package/starknet-merkle-tree) library.
 The tree can be hashed with Pedersen or Poseidon algorithms 
 ```typescript
 import * as Merkle from "starknet-merkle-tree";
 
-const list = json.parse(fs.readFileSync("./src/scripts/merkleTree/airdropSJS6Goerli/listAddressesGoerli.json").toString("ascii"));
+const list = json.parse(fs.readFileSync("./src/scripts/merkleTree/airdropSJS6Sepolia/listAddressesSepolia.json").toString("ascii"));
 const airdrop: Merkle.InputForMerkle[] = list.list;
 const tree1 = Merkle.StarknetMerkleTree.create(airdrop, Merkle.HashType.Poseidon);
 console.log("root =", tree1.root); // for smartcontract constructor
-fs.writeFileSync('./src/scripts/merkleTree/airdropSJS6Goerli/treeListAddressGoerli.json', JSON.stringify(tree1.dump(),undefined,2));
+fs.writeFileSync('./src/scripts/merkleTree/airdropSJS6Sepolia/treeListAddressSepolia.json', JSON.stringify(tree1.dump(),undefined,2));
 ```
 After some seconds of hard calculation (50 minutes on my laptop for 500 000 leaves, 5 seconds for this tuto), the tree is completed and is stored in the hard disk. This calculation is needed only once ; from now, we will only read the tree file.
 
 ## storage of the Merkle tree file :
 This big file has to be stored somewhere in the server, and it will be used only by the server (as it's a large file, it has to never be downloaded by the frontend).  
-In this DAPP, the resulting tree is  stored in the server [here](src/app/server/tree/treeListAddressGoerli.json).
+In this DAPP, the resulting tree is  stored in the server [here](src/app/server/tree/treeListAddressSepolia.json).
 
 ## Deployment of the Merkle-Verify contract :
 As we have now the root value of the tree, we can deploy in Testnet an instance of the contract that verify the validity of a leaf.
@@ -116,12 +116,14 @@ In this chapter, we have created the Merkle tree, and all the necessary contract
 In the DAPP, all the specific constants necessary for the airdrop are in `utils/constants`, [here](src/app/utils/constants.ts).
 
 You have some main Components :
-- `Block`, with its Zustand context. The block content is read each 10 seconds (that includes the block number). Each time the block number is changing, many updates are triggered in the DAPP.
+- `Block`, with its Zustand context. The last block number is read each 10 seconds. Each time the block number is changing, many updates are triggered in the DAPP (with useEffect()).
  
-- `SelectWallet`, that will scan the `window` object of your browser, find all the Starknet wallet extensions, and check which wallets are compatible with Starknet.js v6 (so compatible with get-starknet v3.0.2). A wallet list is displayed and you have to select the one you want to use.
+- `SelectWallet` will scan the `window` object of your browser, find all the Starknet wallet extensions, and check which wallets are compatible with Starknet.js v6 (so compatible with get-starknet v4.0.0). A wallet list is displayed and you have to select the one you want to use.
 - `ConnectWallet`, with its context. It contains the code to connect a browser wallet account to your DAPP. It will create a Starknet.js v6 `WalletAccount` instance. You will use it for all your communications with Starknet. But under the hood, the browser wallet will be used for all actions that will request to write in Starknet, and your own rpcProvider (here a Blast provider) will be used to read the network. 
-- `GetBalance`, is able to display the balance of any account for any token. An evolution has been created in `GetBalanceAirdrop`, that update the balance just after the airdrop transaction.
-- `Airdrop` and `Claim`, that holds the complex logical of all possible cases of this airdrop. Starknet data are read from the rpcProvider, and transactions are launched using the Account instance provided by the browser wallet. The Merkle tree data are asked to the server, using a [Next.js Server Action](src/app/server/airdropServer.ts) ; this function calls the [starknet-merkle-tree](https://www.npmjs.com/package/starknet-merkle-tree) library to get the proof corresponding to the account address.
+- `GetBalanceAirdrop`, is able to display the balance of the token. It updates the balance just after the airdrop transaction.
+- `Airdrop` and `Claim`, that holds the complex logical of all possible cases of this airdrop. We interact with Starknet using the new WalletAccount class. To read Starknet, this class is using your own rpcProvider (here a Blast node). To write Starknet, it uses a direct link with the wallet. 
+ 
+The Merkle tree data are asked to the server, using a [Next.js Server Action](src/app/server/airdropServer.ts) ; this function calls the [starknet-merkle-tree](https://www.npmjs.com/package/starknet-merkle-tree) library to get the proof corresponding to the account address.
 
 # 3. Execution of the airdrop in Starknet :
 The DAPP is interacting with Starknet for :
@@ -131,7 +133,7 @@ The DAPP is interacting with Starknet for :
   ```
 - Read the last block :
   ```typescript
-  const block = await FrontendProvider.getBlock("latest");
+  const block = await FrontendProvider..getBlockNumber();
   ```
 - Read the quantity of remaining tokens for the consolation prizes :
   ```typescript
@@ -151,11 +153,12 @@ The DAPP is interacting with Starknet for :
   ```
 - Execute the airdrop :
   ```typescript
+  const myWalletAccount = new WalletAccount(new RpcProvider({ nodeUrl: myProviderUrl }), myWallet);
   const claimCall = airdropContract.populate("claim_airdrop", {
       amount: amount,
       proof: proof,
     })
-  const resp = await account!.execute(claimCall, undefined, {});
+  const resp = await myWalletAccount?.execute(claimCall);
   const txR = await myProvider.waitForTransaction(resp.transaction_hash);
   ```
 

@@ -15,19 +15,13 @@ export default function BlockSurvey({ providerUrl }: Props) {
 
     useEffect(() => {
         const tim = setInterval(() => {
-            FrontendProvider.getBlock("latest").then((resp: GetBlockResponse) => {
-                if (resp.status !== 'PENDING') {
+            FrontendProvider.getBlockNumber()
+                .then((resp: number) => {
                     setBlockData({
-                        timeStamp: resp.timestamp,
-                        blockHash: resp.block_hash ?? "",
-                        blockNumber: resp.block_number,
-                        //gasPrice: resp.gas_price ?? "" // Starknet.js v5
-                         gasPrice: resp.l1_gas_price.price_in_wei ?? "" // Starknet.js v6
-                    }
-                    )
-                }
-            })
-                .catch((e) => { console.log("error getBloc=", e) })
+                        blockNumber: resp
+                    })
+                })
+                .catch((e) => { console.log("error getBlocNumber=", e) })
             console.log("timerId=", tim);
         }
             , 10_000 //ms

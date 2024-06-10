@@ -1,8 +1,7 @@
 "use client";
-import {  AirdropAddress } from "@/app/utils/constants";
-import {  erc20Address, myProviderUrl, networkName } from "@/app/utils/constants";
+import { AirdropAddress } from "@/app/utils/constants";
+import { erc20Address, myProviderUrl, networkName } from "@/app/utils/constants";
 import { useStoreWallet } from "../ConnectWallet/walletContext";
-import GetBalance from "../Contract/GetBalance";
 import { useEffect, useState } from "react";
 import { Spinner, Text } from "@chakra-ui/react";
 import { useStoreBlock } from "../Block/blockContext";
@@ -10,6 +9,7 @@ import { Contract, RpcProvider, constants, shortString } from "starknet";
 import { airdropAbi } from "@/app/contracts/abis/airdropAbi";
 import Claim from "./Claim";
 import GetBalanceAirdrop from "../Contract/GetBalanceAirdrop";
+import { WalletEvents } from "../ConnectWallet/WalletEvents";
 
 export default function Airdrop() {
   const isConnected = useStoreWallet(state => state.isConnected);
@@ -23,7 +23,7 @@ export default function Airdrop() {
   const chainId = useStoreWallet(state => state.chain);
 
   function isValidNetwork(): boolean {
-    return chainId==shortString.encodeShortString(networkName); 
+    return chainId == shortString.encodeShortString(networkName);
   }
 
 
@@ -40,7 +40,7 @@ export default function Airdrop() {
     }
     fetchData().catch(console.error);
   }
-    , [isConnected, blockFromContext, addressAccountFromContext]);
+    , [isConnected, blockFromContext, addressAccountFromContext, chainId]);
 
   return (
     <>
@@ -49,9 +49,10 @@ export default function Airdrop() {
         </>
       ) : (
         <>
+          <WalletEvents></WalletEvents>
           {!isValidNetwork() ? (
             <>
-            <Text color="red">You are not in {networkName}. <br></br> Please unconnect / reconnect with a wallet configured to {networkName}.</Text>
+              <Text color="red">You are not in {networkName}. <br></br> Please select {networkName} network in your wallet.</Text>
             </>
           ) : (
             <>
@@ -70,7 +71,7 @@ export default function Airdrop() {
                         </>
                       ) : (
                         <>
-                        {isAirdropped}
+                          {isAirdropped}
                           <Claim></Claim>
                         </>
                       )}
@@ -80,7 +81,7 @@ export default function Airdrop() {
                 </>
               ) : (
                 <>
-                
+
                 </>
               )
               }

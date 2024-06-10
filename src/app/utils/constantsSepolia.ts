@@ -17,5 +17,3 @@ export const AirdropClass="0x3d1dc0268e3d4f6de27a2885769a8d57b2458c64e5c38fc3ec1
 export const AirdropAddress="0x57ba0443c28b38ee4be0ae1e6f5e0a63a6e8b6cc6e352c997b6d0d24fe0b22d"; // Sepolia testnet 
 
 //  treePath 👉 to update in first lines of src/app/server/airdropServer.ts
-
- 
