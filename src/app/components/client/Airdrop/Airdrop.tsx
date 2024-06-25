@@ -42,7 +42,7 @@ export default function Airdrop() {
     };
     fetchData().catch(console.error);
   }
-    , [isConnected, blockFromContext, addressAccountFromContext, chainId]);
+    , [isConnected, blockFromContext.blockNumber, addressAccountFromContext, chainId]);
 
   useEffect(() => {
     if (!isValidNetwork()) {

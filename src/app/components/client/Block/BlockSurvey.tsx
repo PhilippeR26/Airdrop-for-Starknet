@@ -17,9 +17,11 @@ export default function BlockSurvey({ providerUrl }: Props) {
         const tim = setInterval(() => {
             FrontendProvider.getBlockNumber()
                 .then((resp: number) => {
-                    setBlockData({
-                        blockNumber: resp
-                    })
+                    if (resp !== blockFromContext.blockNumber) {
+                        setBlockData({
+                            blockNumber: resp
+                        })
+                    }
                 })
                 .catch((e) => { console.log("error getBlocNumber=", e) })
             console.log("timerId=", tim);
