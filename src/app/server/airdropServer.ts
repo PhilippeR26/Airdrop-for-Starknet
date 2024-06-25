@@ -4,25 +4,33 @@ import * as Merkle from "starknet-merkle-tree";
 import fs from "fs";
 import type { ProofAnswer } from "@/interfaces";
 import { revalidatePath } from "next/cache";
-import { addAddressPadding, encode, uint256 } from "starknet";
+import { addAddressPadding, constants, encode, uint256 } from "starknet";
 //                           👇👇👇 be sure to link to the right file
-import  treeExt  from "./tree/treeListAddressSepolia.json";
+import treeExtSepolia from "./tree/treeListAddressSepolia.json";
+import treeExtMainnet from "./tree/treeListAddressMainnet.json";
+import { networkName } from "../utils/constants";
 
 
 export async function checkWhitelist(accountAddress: string): Promise<ProofAnswer> {
-    const address=addAddressPadding(accountAddress);
+    const address = addAddressPadding(accountAddress);
     console.log(address);
-     const tree = Merkle.StarknetMerkleTree.load(
-        treeExt as Merkle.StarknetMerkleTreeData
-     );
-    const indexAddress = tree.dump().values.findIndex((leaf,idx:number) => addAddressPadding(leaf.value[0]) == address);
+    let treeExt: Merkle.StarknetMerkleTreeData;
+    // const workaround=String(constants.NetworkName.SN_MAIN);
+    const workaround = '0x534e5f4d41494e';
+    if (networkName == workaround) {
+        treeExt = treeExtMainnet as Merkle.StarknetMerkleTreeData
+    } else {
+        treeExt = treeExtSepolia as Merkle.StarknetMerkleTreeData
+    }
+    const tree = Merkle.StarknetMerkleTree.load(treeExt);
+    const indexAddress = tree.dump().values.findIndex((leaf, idx: number) => addAddressPadding(leaf.value[0]) == address);
     if (indexAddress === -1) {
         return ({
             address: accountAddress,
             amount: 0n,
             proof: [],
-            leaf:[],
-            leafHash:"",
+            leaf: [],
+            leafHash: "",
             isWhiteListed: false,
         });
     }
@@ -32,9 +40,9 @@ export async function checkWhitelist(accountAddress: string): Promise<ProofAnswe
     // revalidatePath("/"); // clear cache and update result
     return {
         address: accountAddress,
-        amount: uint256.uint256ToBN({low:inpData[1],high:inpData[2]}),
+        amount: uint256.uint256ToBN({ low: inpData[1], high: inpData[2] }),
         proof,
-        leaf:inpData,
+        leaf: inpData,
         leafHash,
         isWhiteListed: true,
     }

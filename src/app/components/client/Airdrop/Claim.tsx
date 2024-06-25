@@ -2,20 +2,19 @@ import { useEffect, useState } from "react"
 import { Button, Spinner } from "@chakra-ui/react";
 import Prides from "react-canvas-confetti/dist/presets/pride";
 import * as Merkle from "starknet-merkle-tree";
-import { Account, CallData, Contract, RpcProvider } from "starknet";
+import { Account, CallData, Contract, RpcProvider, constants } from "starknet";
 
 import { useStoreWallet } from "../ConnectWallet/walletContext";
 import { checkWhitelist } from "@/app/server/airdropServer";
 import type { ProofAnswer } from "@/interfaces";
 import { airdropAbi } from "@/app/contracts/abis/airdropAbi";
-import { AirdropAddress, myProviderUrl } from "@/app/utils/constants";
+import { AirdropAddress, erc20Address, myProviderUrl } from "@/app/utils/constants";
 import { useStoreBlock } from "../Block/blockContext";
 import { useStoreAirdrop } from "./airdropContext";
-import type { AddInvokeTransactionParameters } from "get-starknet-core";
 
 
 export default function Airdrop() {
-  const myWallet = useStoreWallet(state => state.wallet);
+  const myWallet = useStoreWallet(state => state.walletSWO);
   const myWalletAccount = useStoreWallet(state => state.myWalletAccount);
 
   const [isEligible, setIsEligible] = useState<Boolean>(false);
@@ -41,7 +40,7 @@ export default function Airdrop() {
   const claimAirdrop = async () => {
     setIsProcessStarted(true);
     try {
-       const claimCall = airdropContract.populate("claim_airdrop", {
+      const claimCall = airdropContract.populate("claim_airdrop", {
         amount: amount,
         proof: proof,
       });
@@ -71,7 +70,7 @@ export default function Airdrop() {
       proof: ["0x00"],
     })
     try {
-     const claimCall = airdropContract.populate("claim_airdrop", {
+      const claimCall = airdropContract.populate("claim_airdrop", {
         amount: 1,
         proof: [0],
       });
@@ -128,6 +127,23 @@ export default function Airdrop() {
   }
     , [isConnected, addressAccountFromContext, blockFromContext]);
 
+  useEffect(() => {
+    const fetchAddToken = async () => {
+      const resp = await myWalletAccount?.watchAsset({
+        type: "ERC20",
+        options: {
+          address: erc20Address,
+
+        }
+      });
+      console.log("Add Token to wallet =", resp);
+    }
+    if (isAirdropSuccess) {
+      fetchAddToken().catch(console.error);
+    }
+  }
+    , [isAirdropSuccess]);
+
   return (
     <>
       {!isChecked ? (<>
@@ -151,7 +167,6 @@ export default function Airdrop() {
               {isConsoled ? (
                 <>
                   You have received a consolation prize.<br></br>
-                  Do not forget to configure your wallet to display this token.
                 </>
               ) : (
                 <>

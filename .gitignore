@@ -38,5 +38,6 @@ next-env.d.ts
 yalc.lock
 
 package-lock.json
+yarn.lock
 /Trash
 

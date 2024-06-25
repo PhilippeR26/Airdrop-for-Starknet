@@ -1,12 +1,13 @@
-import { type StarknetWindowObject } from "get-starknet-core";
 import { Button, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, StackDivider, VStack, useDisclosure } from "@chakra-ui/react";
 import { useStoreWallet } from "./walletContext";
 import { useEffect } from "react";
 import { useState } from "react";
 import { addAddressPadding, constants, encode, shortString } from "starknet";
+import { WALLET_API } from "@starknet-io/types-js";
+import {isWalletObj} from "get-starknet-core";
 
 type ValidWallet = {
-  wallet: StarknetWindowObject;
+  wallet: WALLET_API.StarknetWindowObject;
   isValid: boolean;
 }
 
@@ -20,10 +21,10 @@ export async function scanObjectForWallets(
   const listNames: string[] = AllObjectsNames.filter((name: string) =>
     name.startsWith("starknet")
   );
-  const Wallets: StarknetWindowObject[] = Object.values(
-    [...new Set(listNames)].reduce<Record<string, StarknetWindowObject>>(
+  const Wallets: WALLET_API.StarknetWindowObject[] = Object.values(
+    [...new Set(listNames)].reduce<Record<string, WALLET_API.StarknetWindowObject>>(
       (wallets, name: string) => {
-        const wallet = obj[name] as StarknetWindowObject;
+        const wallet = obj[name] as WALLET_API.StarknetWindowObject;
         if (!wallets[wallet.id]) { wallets[wallet.id] = wallet }
         return wallets;
       },
@@ -31,7 +32,7 @@ export async function scanObjectForWallets(
     )
   );
   const validWallets: ValidWallet[] = await Promise.all(Wallets.map(
-    async (wallet: StarknetWindowObject) => {
+    async (wallet: WALLET_API.StarknetWindowObject) => {
       const isValid = await checkCompatibility(wallet);
       return { wallet: wallet, isValid: isValid } as ValidWallet;
     }
@@ -40,32 +41,14 @@ export async function scanObjectForWallets(
   return validWallets;
 }
 
-export const isWalletObj = (wallet: any): boolean => {
-  try {
-    return (
-      wallet &&
-      [
-        // wallet's must have methods/members, see IStarknetWindowObject
-        "request",
-        "on",
-        "off",
-        "version",
-        "id",
-        "name",
-        "icon",
-      ].every((key) => key in wallet)
-    )
-  } catch (err) { }
-  return false
-}
-
-const checkCompatibility = async (myWallet: StarknetWindowObject) => {
+const checkCompatibility = async (myWalletSWO: WALLET_API.StarknetWindowObject) => {
   let isCompatible: boolean = false;
   try {
     // *** TODO : Replace this request by Wallet api version, when available in Wallets.
     // starknet_supportedSpecs for ArgentX
     // wallet_supportedSpecs for Braavos
-    await myWallet.request({ type: "wallet_supportedSpecs" });
+    // wallet_supportedWalletApi in the spec 
+    await myWalletSWO.request({ type: "wallet_supportedSpecs" });
     isCompatible = true;
   } catch {
     (err: any) => { console.log("Wallet compatibility failed.") };
@@ -76,8 +59,8 @@ const checkCompatibility = async (myWallet: StarknetWindowObject) => {
 export default function SelectWallet() {
   const { isOpen, onOpen, onClose } = useDisclosure() // to handle the window of wallet selection
 
-  const myWallet = useStoreWallet(state => state.wallet);
-  const setMyWallet = useStoreWallet(state => state.setMyWallet);
+  const myWallet = useStoreWallet(state => state.walletSWO);
+  const setMyWallet = useStoreWallet(state => state.setMyWalletSWO);
 
 
   const displaySelectWalletUI = useStoreWallet(state => state.displaySelectWalletUI);

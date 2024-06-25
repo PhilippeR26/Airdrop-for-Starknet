@@ -3,8 +3,8 @@ import { Box, Center, Divider, Link } from "@chakra-ui/react";
 import { useStoreBlock } from "./Block/blockContext";
 import { useEffect, useState } from "react";
 import { airdropAbi } from "@/app/contracts/abis/airdropAbi";
-import { AirdropAddress, erc20Address, myProviderUrl } from "@/app/utils/constants";
-import { Contract, RpcProvider } from "starknet";
+import { AirdropAddress, erc20Address, myProviderUrl, networkName } from "@/app/utils/constants";
+import { Contract, RpcProvider, constants } from "starknet";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 
 export default function StatusAirdrop() {
@@ -28,6 +28,11 @@ export default function StatusAirdrop() {
     fetchData().catch(console.error);
   }
     , [blockFromContext.blockNumber]);
+
+  // const workaround = String(constants.NetworkName.SN_MAIN);
+  const workaround = '0x534e5f4d41494e';
+  const baseUrl = networkName === workaround ? "sepolia." : "";
+
   return <Center>
     <Box
       marginTop="1"
@@ -42,7 +47,11 @@ export default function StatusAirdrop() {
       fontWeight="bold"
       color="red.800"
     >
-      Token address = <Link href={'https://sepolia.starkscan.co/token/' + erc20Address} isExternal>
+      Token address = &nbsp;
+      <Link
+        href={'https://' + baseUrl + 'starkscan.co/token/' + erc20Address}
+        isExternal
+      >
         {erc20Address} <ExternalLinkIcon mx='2px' />
       </Link> <br></br>
       <Divider borderColor='gray.800' />

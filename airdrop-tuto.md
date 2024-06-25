@@ -119,21 +119,21 @@ You have some main Components :
 - `Block`, with its Zustand context. The last block number is read each 10 seconds. Each time the block number is changing, many updates are triggered in the DAPP (with useEffect()).
  
 - `SelectWallet` will scan the `window` object of your browser, find all the Starknet wallet extensions, and check which wallets are compatible with Starknet.js v6 (so compatible with get-starknet v4.0.0). A wallet list is displayed and you have to select the one you want to use.
-- `ConnectWallet`, with its context. It contains the code to connect a browser wallet account to your DAPP. It will create a Starknet.js v6 `WalletAccount` instance. You will use it for all your communications with Starknet. But under the hood, the browser wallet will be used for all actions that will request to write in Starknet, and your own rpcProvider (here a Blast provider) will be used to read the network. 
+- `ConnectWallet`, with its context. It contains the code to connect a browser wallet account to your DAPP. It will create a Starknet.js v6 `WalletAccount` instance. You will use it for all your communications with Starknet. But under the hood, the browser wallet will be used for all actions that will request to write in Starknet, and your own rpcProvider (here a Blast provider) will be used to read the network (see an introduction to WalletAccounts [here](https://github.com/PhilippeR26/Starknet-WalletAccount)). 
 - `GetBalanceAirdrop`, is able to display the balance of the token. It updates the balance just after the airdrop transaction.
 - `Airdrop` and `Claim`, that holds the complex logical of all possible cases of this airdrop. We interact with Starknet using the new WalletAccount class. To read Starknet, this class is using your own rpcProvider (here a Blast node). To write Starknet, it uses a direct link with the wallet. 
  
 The Merkle tree data are asked to the server, using a [Next.js Server Action](src/app/server/airdropServer.ts) ; this function calls the [starknet-merkle-tree](https://www.npmjs.com/package/starknet-merkle-tree) library to get the proof corresponding to the account address.
 
 # 3. Execution of the airdrop in Starknet :
-The DAPP is interacting with Starknet for :
+The DAPP is interacting with Starknet to :
 - Read the ERC20contract :
   ```typescript
   const resp = await erc20Contract.call("balanceOf", [accountAddress]) as bigint;
   ```
 - Read the last block :
   ```typescript
-  const block = await FrontendProvider..getBlockNumber();
+  const block = await FrontendProvider.getBlockNumber();
   ```
 - Read the quantity of remaining tokens for the consolation prizes :
   ```typescript

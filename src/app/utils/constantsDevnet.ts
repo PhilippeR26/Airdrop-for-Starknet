@@ -5,7 +5,7 @@ export const strkAddress = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab0720
 
 export const myProviderUrl = "http://127.0.0.1:5050/rpc"; // devnet-rs
 
-export const networkName = constants.NetworkName.SN_SEPOLIA;
+//export const networkName = constants.NetworkName.SN_SEPOLIA;
 
 export const erc20Class = "0x779f8e128064c8663491f842e11970ca799620cbdc5d5600a312621cabf3c67";
 export const erc20Address = "0x15fb5348e915377e9d3e6fa428ddf5b3ea23e63e9f6fef7320000ef28cc2efd"; // devnet

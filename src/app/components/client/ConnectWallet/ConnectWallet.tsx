@@ -1,13 +1,14 @@
 "use client";
 
-import { RpcProvider, WalletAccount, addAddressPadding, shortString } from 'starknet';
+import { RpcProvider, WalletAccount, addAddressPadding, shortString} from 'starknet';
 import { Button, ChakraProvider } from "@chakra-ui/react";
 
 import { useStoreWallet } from './walletContext';
 import SelectWallet from './SelectWallet';
 
 import { networkName } from '@/app/utils/constants';
-import type { StarknetWindowObject } from 'get-starknet-core';
+import { WALLET_API } from "@starknet-io/types-js";
+
 import { useEffect } from 'react';
 import { myProviderUrl } from '@/app/utils/constants';
 
@@ -15,8 +16,8 @@ export default function ConnectWallet() {
   const displaySelectWalletUI = useStoreWallet(state => state.displaySelectWalletUI);
   const setSelectWalletUI = useStoreWallet(state => state.setSelectWalletUI);
 
-  const myWallet = useStoreWallet(state => state.wallet);
-  const setMyWallet = useStoreWallet(state => state.setMyWallet);
+  const myWalletSWO = useStoreWallet(state => state.walletSWO);
+  const setMyWalletSWO = useStoreWallet(state => state.setMyWalletSWO);
   
   
   const chainFromContext = useStoreWallet(state => state.chain);
@@ -30,15 +31,15 @@ export default function ConnectWallet() {
   const isConnected = useStoreWallet(state => state.isConnected);
   const setConnected = useStoreWallet(state => state.setConnected);
 
-  const handleSelectedWalletNew = async (wallet: StarknetWindowObject) => {
-    const accountAddress = await wallet.request({ type: "wallet_requestAccounts" });
+  const handleSelectedWalletNew = async (walletSWO: WALLET_API.StarknetWindowObject) => {
+    const accountAddress = await walletSWO.request({ type: "wallet_requestAccounts" });
     console.log("account address from wallet =", accountAddress);
     setAddressAccount(addAddressPadding(accountAddress[0])); // zustand
-    const chainId = (await wallet.request({ type: "wallet_requestChainId" })).toString();
+    const chainId = (await walletSWO.request({ type: "wallet_requestChainId" })).toString();
     setChain(chainId); // zustand
     setSelectWalletUI(false); // zustand
     setConnected(true); // zustand
-    setMyWalletAccount(new WalletAccount(new RpcProvider({ nodeUrl: myProviderUrl }), wallet)); // zustand
+    setMyWalletAccount(new WalletAccount(new RpcProvider({ nodeUrl: myProviderUrl }), walletSWO)); // zustand
   }
 
 
@@ -46,12 +47,12 @@ export default function ConnectWallet() {
   useEffect(
     () => {
       console.log("try to initialize wallet.")
-      if (!!myWallet) {
-        handleSelectedWalletNew(myWallet).then((_res) => console.log("wallet initialized."));
+      if (!!myWalletSWO) {
+        handleSelectedWalletNew(myWalletSWO).then((_res) => console.log("wallet initialized."));
       }
       return () => { }
     },
-    [myWallet]
+    [myWalletSWO]
   );
 
 
@@ -69,7 +70,7 @@ export default function ConnectWallet() {
               marginBottom={1}
               onClick={() => {
                 setSelectWalletUI(true);
-                setMyWallet(undefined);
+                setMyWalletSWO(undefined);
               }} // Mainnet
             >
               Connect a {networkName} Wallet

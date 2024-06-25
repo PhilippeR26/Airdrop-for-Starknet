@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { Spinner, Text } from "@chakra-ui/react";
 import { useStoreBlock } from "../Block/blockContext";
 import { Contract, RpcProvider, constants, shortString } from "starknet";
+import { WALLET_API } from "@starknet-io/types-js";
+
 import { airdropAbi } from "@/app/contracts/abis/airdropAbi";
 import Claim from "./Claim";
 import GetBalanceAirdrop from "../Contract/GetBalanceAirdrop";
@@ -21,11 +23,11 @@ export default function Airdrop() {
   const addressAccountFromContext = useStoreWallet(state => state.addressAccount);
   const blockFromContext = useStoreBlock(state => state.dataBlock);
   const chainId = useStoreWallet(state => state.chain);
+  const myWallet = useStoreWallet(state => state.walletSWO);
 
   function isValidNetwork(): boolean {
     return chainId == shortString.encodeShortString(networkName);
   }
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,10 +39,25 @@ export default function Airdrop() {
         console.log("isAirdropped, isAirdropProcessed:", isAirdropped, isAirdropProcessed);
 
       }
-    }
+    };
     fetchData().catch(console.error);
   }
     , [isConnected, blockFromContext, addressAccountFromContext, chainId]);
+
+  useEffect(() => {
+    if (!isValidNetwork()) {
+      const tryChangeNetwork = async () => {
+        const wallet = myWallet as WALLET_API.StarknetWindowObject;
+        const myChainId: WALLET_API.SwitchStarknetChainParameters = {
+          chainId: shortString.encodeShortString(networkName)
+        }
+        await wallet.request({ type: "wallet_switchStarknetChain", params: myChainId });
+      };
+      // 11/jun/2024 : this method is not working with Braavos, so change has to be performed manually (OK with ArgentX)
+      tryChangeNetwork().catch(console.error);
+    }
+  }
+    , [chainId]);
 
   return (
     <>
