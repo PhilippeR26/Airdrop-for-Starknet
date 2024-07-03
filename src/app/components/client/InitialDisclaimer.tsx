@@ -28,7 +28,7 @@ export default function InitialDisclaimer() {
                             This Airdrop is NOT related to the Stark (STRK) airdrop.<br /><br />
                             This airdrop is celebrating major updates of the most useful JS tools necessary to create a Starknet DAPP : <br />
                             <UnorderedList pl={5}>
-                                <ListItem>Starknet.js v6.10.0</ListItem>
+                                <ListItem>Starknet.js v6.11.0</ListItem>
                                 <ListItem>Starknet-merkle-tree v1.0.2</ListItem>
                                 <ListItem>Get-starknet v4.0.0</ListItem>
                                 <ListItem>Starknet-react v3.0.0</ListItem>
