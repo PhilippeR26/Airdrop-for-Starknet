@@ -6,11 +6,12 @@
 
 **This DAPP has not been audited ; use at your own risks.**
 
-> **Stars are highly appreciated! Thanks in advance.**
+> [!IMPORTANT]
+> Stars are appreciated!
 
-This repo contains a demo DAPP performing an airdrop in the Starknet network.  
+This repo contains a demo DAPP performing an airdrop in the Starknet network, using the new [WalletAPI](https://github.com/PhilippeR26/Starknet-WalletAccount).  
 
-you can launch this DAPP [here](https://airdrop-for-starknet.vercel.app/).
+You can launch this DAPP [here](https://airdrop-for-starknet.vercel.app/).
 It can be used as boiler plate to create your own airdrop.
 
 ## Tutorial :
@@ -37,7 +38,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the files.
 
 The easiest way to deploy your airdrop app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.  
 Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

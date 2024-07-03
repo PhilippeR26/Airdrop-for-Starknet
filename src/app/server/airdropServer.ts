@@ -15,8 +15,7 @@ export async function checkWhitelist(accountAddress: string): Promise<ProofAnswe
     const address = addAddressPadding(accountAddress);
     console.log(address);
     let treeExt: Merkle.StarknetMerkleTreeData;
-    // const workaround=String(constants.NetworkName.SN_MAIN);
-    const workaround = '0x534e5f4d41494e';
+    const workaround=String(constants.NetworkName.SN_MAIN);
     if (networkName == workaround) {
         treeExt = treeExtMainnet as Merkle.StarknetMerkleTreeData
     } else {

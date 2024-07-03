@@ -6,7 +6,7 @@ export const strkAddress = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab0720
 export const myProviderUrl = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"; // Sepolia Testnet
 
 // export const networkName = constants.NetworkName.SN_SEPOLIA;
-export const networkName:string = 'SN_SEPOLIA';
+export const networkName: string = 'SN_SEPOLIA';
 
 export const MerkleVerifyContract = "0x14877859e56be2beca0a332e169dc6bfbbfcf6bc3ab7fe33759794114efa2ff";
 

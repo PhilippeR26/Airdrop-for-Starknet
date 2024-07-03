@@ -30,7 +30,7 @@
     "react-dom": "18.3.1",
     "server-only": "^0.0.1",
     "sharp": "^0.33.4",
-    "starknet": "^6.10.0",
+    "starknet": "^6.11.0",
     "starknet-merkle-tree": "^1.0.2",
     "swr": "^2.2.5",
     "typescript": "^5.4.5",

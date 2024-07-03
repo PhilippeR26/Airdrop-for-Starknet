@@ -29,9 +29,8 @@ export default function StatusAirdrop() {
   }
     , [blockFromContext.blockNumber]);
 
-  // const workaround = String(constants.NetworkName.SN_MAIN);
-  const workaround = '0x534e5f4d41494e';
-  const baseUrl = networkName === workaround ? "sepolia." : "";
+  const workaround: string = constants.NetworkName.SN_MAIN;
+  const baseUrl = networkName === workaround ? "" : "sepolia.";
 
   return <Center>
     <Box
