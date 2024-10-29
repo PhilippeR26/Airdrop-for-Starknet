@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { addAddressPadding, constants, encode, shortString } from "starknet";
 import { WALLET_API } from "@starknet-io/types-js";
-import {isWalletObj} from "get-starknet-core";
+import {isWalletObject} from "@starknet-io/get-starknet-core";
 
 type ValidWallet = {
   wallet: WALLET_API.StarknetWindowObject;
@@ -72,7 +72,7 @@ export default function SelectWallet() {
   useEffect(
     () => {
       const fetchData = async () => {
-        const res = await scanObjectForWallets(window, isWalletObj);
+        const res = await scanObjectForWallets(window, isWalletObject);
         return res
       }
       console.log("Launch select wallet window.");

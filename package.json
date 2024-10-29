@@ -31,7 +31,7 @@
     "server-only": "^0.0.1",
     "sharp": "^0.33.4",
     "starknet": "^6.17.0",
-    "starknet-merkle-tree": "^1.0.4",
+    "starknet-merkle-tree": "1.0.2",
     "swr": "^2.2.5",
     "typescript": "^5.4.5",
     "zustand": "^4.5.2"

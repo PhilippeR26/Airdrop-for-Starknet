@@ -23,7 +23,7 @@ export default function LowerBanner() {
           >
             Powered by
             <Link color="blue.700" href='https://starknetjs.com' isExternal> Starknet.js v6.17.0<ExternalLinkIcon mx='2px'></ExternalLinkIcon></Link>
-             , <Link color="blue.700" href='https://github.com/PhilippeR26/starknetMerkleTree' isExternal> Starknet-merkle-tree v1.0.4<ExternalLinkIcon mx='2px'></ExternalLinkIcon></Link>,
+             , <Link color="blue.700" href='https://github.com/PhilippeR26/starknetMerkleTree' isExternal> Starknet-merkle-tree v1.0.2<ExternalLinkIcon mx='2px'></ExternalLinkIcon></Link>,
             
             <Link color="blue.700" href='https://github.com/starknet-io/get-starknet' isExternal> get-starknet v4.0.1<ExternalLinkIcon mx='2px'></ExternalLinkIcon></Link>
             ,
