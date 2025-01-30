@@ -39,7 +39,9 @@ export default function ConnectWallet() {
     setChain(chainId); // zustand
     setSelectWalletUI(false); // zustand
     setConnected(true); // zustand
-    setMyWalletAccount(new WalletAccount(new RpcProvider({ nodeUrl: myProviderUrl }), walletSWO)); // zustand
+    const frontProvider=new RpcProvider({ nodeUrl: myProviderUrl });
+    const WA=await WalletAccount.connect(frontProvider, walletSWO);
+    setMyWalletAccount(WA); // zustand
   }
 
 
